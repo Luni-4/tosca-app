@@ -1,0 +1,132 @@
+<section class="is-fullheight text-centered">
+    <div class="container">
+        <div class="cards-grid">
+            {% for device in devices %}
+            <div id="card-{{ device.id }}" class="card">
+                <img id="light-icon-{{ device.id }}" src="/assets/svg/light-off.svg" class="card-icon">
+                <h3>{{ device.modes }}</h3>
+                <div class="modes">
+                    {% set manual_selected = "" %}
+                    {% set motion_detection_selected = "" %}
+                    {% set ambient_light_selected = "" %}
+                    {% if device.mode == "Manual" %}
+                        {% set manual_selected = " selected" %}
+                    {% elif device.mode == "MotionDetection" %}
+                        {% set motion_detection_selected = " selected" %}
+                    {% else %}
+                        {% set ambient_light_selected = " selected" %}
+                    {% endif %}
+                    <form action="/request" method="post">
+                        <input type="hidden" name="device_id" value="{{ device.id }}">
+                        <input type="hidden" name="device_state" value="{{ device.manual_mode }}">
+                        <input type="hidden" name="route" value="{{ device.manual_route }}">
+                        <button class="mode{{ manual_selected }}" type="submit">{{ device.manual }}</button>
+                    </form>
+                    <form action="/request" method="post">
+                        <input type="hidden" name="device_id" value="{{ device.id }}">
+                        <input type="hidden" name="device_state" value="{{ device.motion_detection_mode }}">
+                        <input type="hidden" name="route" value="{{ device.motion_detection_route }}">
+                        <button class="mode{{ motion_detection_selected }}" type="submit">{{ device.motion_detection }}</button>
+                    </form>
+                    <form action="/request" method="post">
+                        <input type="hidden" name="device_id" value="{{ device.id }}">
+                        <input type="hidden" name="device_state" value="{{ device.ambient_light_mode }}">
+                        <input type="hidden" name="route" value="{{ device.ambient_light_route }}">
+                        <button class="mode{{ ambient_light_selected }}" type="submit">{{ device.ambient_light }}</button>
+                    </form>
+                </div>
+                <h3>{{ device.commands }}</h3>
+                <div class="button-container">
+                    <form action="/request" method="post">
+                        <input type="hidden" name="device_id" value="{{ device.id }}">
+                        <input type="hidden" name="route" value="{{ device.on_route }}">
+                        <button class="button button-primary" type="submit">{{ device.on }}</button>
+                    </form>
+                    <form action="/request" method="post">
+                        <input type="hidden" name="device_id" value="{{ device.id }}">
+                        <input type="hidden" name="route" value="{{ device.off_route }}">
+                        <button class="button button-primary" type="submit">{{ device.off }}</button>
+                    </form>
+                    <form action="/request" method="post">
+                        <input type="hidden" name="device_id" value="{{ device.id }}">
+                        <input type="hidden" name="route" value="{{ device.toggle_route }}">
+                        <button class="button button-primary" type="submit">{{ device.toggle }}</button>
+                    </form>
+                </div>
+            </div>
+           {% endfor %}
+        </div>
+        <form action="{{ discovery_route }}" method="post">
+            <button id="discovery" class="button button-info button-medium" type="submit">{{ discovery_button }}</button>
+        </form>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+{% for device in devices %}
+    {% if device.has_events %}
+        let eventSource{{ device.id }};
+    {% endif %}
+{% endfor %}
+
+document.addEventListener("DOMContentLoaded", () => {
+    {% for device in devices %}
+        {% if device.has_events %}
+
+            const card = document.getElementById("card-{{ device.id }}");
+
+            if (card) {
+                // THE JS CODE OF EACH CARD
+                const iconLight = document.getElementById("light-icon-{{ device.id }}");
+
+                if (iconLight) {
+                    // Start listening to the events
+                    eventSource{{ device.id }} = new EventSource("/events/{{ device.id }}");
+
+                    eventSource{{ device.id }}.onmessage = function(event) {
+                        const lightStatusMap = {
+                            "true": "/assets/svg/light-on.svg",
+                            "false": "/assets/svg/light-off.svg"
+                        };
+                        document.getElementById("light-icon-{{ device.id }}").src = lightStatusMap[event.data] || "/assets/svg/light-off.svg";
+                    };
+
+                    eventSource{{ device.id }}.onerror = function(event) {
+                        console.error("EventSource for device {{ device.id }} failed:", event);
+                        if (eventSource{{ device.id }}) {
+                          eventSource{{ device.id }}.close();
+                          console.log("EventSource closed for device {{ device.id }}.");
+                        }
+                    };
+                }
+                // END THE JS CODE OF EACH CARD
+            }
+        {% endif %}
+    {% endfor %}
+    console.log("Tosca app successfully initialized!");
+});
+
+// Stop listening to events
+document.getElementById("discovery").onclick = function() {
+    {% for device in devices %}
+        {% if device.has_events %}
+            if (eventSource{{ device.id }}) {
+                eventSource{{ device.id }}.close();
+                console.log("EventSource closed for device {{ device.id }}.");
+            }
+        {% endif %}
+    {% endfor %}
+};
+
+// Always close the events source on page unload
+window.addEventListener("beforeunload", () => {
+    {% for device in devices %}
+        {% if device.has_events %}
+            if (eventSource{{ device.id }}) {
+                eventSource{{ device.id }}.close();
+            }
+        {% endif %}
+    {% endfor %}
+});
+</script>

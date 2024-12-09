@@ -1,0 +1,77 @@
+[startup_errors]
+loading_template = "Errore nel caricamento del template"
+listener = "Creazione del listener fallita"
+server_startup = "Avvio server fallito"
+assets = "Errore nel caricamento della cartella `assets`"
+
+[routes]
+discovery = "/scopri-device"
+request = "/richieste"
+
+[navbar]
+github_description = "Organizzazione ToscaLabs"
+
+[templates_errors]
+get_error_template = "Errore nel trovare il template `error`"
+render_error_template = "Errore nel rendering del template `error`"
+get_index_template = "Errore nel trovare il template `index`"
+render_index_template = "Errore nel renderizzare il template `index`"
+
+[discovery_errors]
+discovery_failed = "Errore nell'individuare i dispositivi"
+start_device_events_failed = "Errore nell'incominciare la ricezione degli eventi"
+
+[parsing_errors]
+u8_parameter = "Errore nel parsing del parametro di tipo `u8`"
+u16_parameter =  "Errore nel parsing del parametro di tipo `u16`"
+u32_parameter =  "Errore nel parsing del parametro di tipo `u32`"
+u64_parameter =  "Errore nel parsing del parametro di tipo `u64`"
+f32_parameter =  "Errore nel parsing del parametro di tipo `f32`"
+f64_parameter =  "Errore nel parsing del parametro di tipo `f64`"
+ok_response = "Errore durante il parsing della risposta `Ok`"
+serial_response = "Errore durante il parsing della risposta `Serial`"
+
+[request_errors]
+not_found_device = "Errore nell'individuare il dispositivo"
+request_creation = "Errore nel creare la richiesta per il dispositivo"
+send_request_with_default_params = "Errore nell'invio della richiesta con parametri di default"
+send_request_with_params = "Errore nell'invio della richiesta con parametri"
+
+[labels]
+go_to_devices = "Torna ai dispositivi"
+no_devices = "Nessun dispositivo trovato."
+missing_route = "Non esiste un percorso chiamato"
+#no_route_description = "Nessuna descrizione a questo percorso."
+
+[buttons]
+discovery = "Ricerca Dispositivi"
+
+[footer]
+rights = "Tutti i diritti riservati."
+
+[logging]
+file_error = "Impossibile creare il log di errore"
+debug_file_error = "Impossibile creare il log di debug"
+subscriber_error = "Inizializzazione del subscriber fallita"
+request_error = "Errore nella richiesta"
+web_app_address_message = "Accedi all'applicazione da questo indirizzo"
+startup_message = "Avvio applicazione..."
+
+[light]
+modes = "Modalità"
+manual_route = "/manual"
+manual_mode = "manual"
+manual = "Manuale"
+motion_detection_route = "/motion-detection"
+motion_detection_mode = "motion"
+motion_detection = "Rileva movimento"
+ambient_light_route = "/ambient-light"
+ambient_light_mode = "ambient"
+ambient_light = "Luce Ambientale"
+commands = "Comandi"
+on_route = "/on"
+on = "Accendi"
+off_route = "/off"
+off = "Spegni"
+toggle_route = "/toggle"
+toggle = "Lampeggia"

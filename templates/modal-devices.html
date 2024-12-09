@@ -1,0 +1,74 @@
+{% for device in devices %}
+{% set device_index = loop.index0 %}
+
+<div id="modal-{{ device.description.kind }}-{{ device_index }}-edit" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <div class="field">
+                <label class="label">{{ new_device_name }}</label>
+                <div class="control">
+                    <input class="input is-success" type="text" placeholder="{{ device_name_placeholder }}" value="{{ device.description.kind }}">
+                </div>
+            </div>
+            <div class="field has-text-centered mt-5">
+                <p class="control">
+                <a class="button has-background-success-50 is-size-5-mobile is-responsive" href="{{ change_device_name_route }}/{{ device_index }}">{{ change_button }}</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+{% for request in device.requests %}
+{% set route = device.requests[request] %}
+<div id="modal-{{ device.description.kind }}-{{ device_index }}" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <div class="content">
+                <h1 class="has-text-centered"><code>{{ device.description.kind }}</code></h1>
+                <!-- TODO: Add this into a minijinja function and its an optional field -->
+                <h2>Description</h2>
+                <p>TODO: DEVICE DESCRIPTION</p>
+                <div class="field is-grouped is-grouped-centered is-grouped-multiline mt-5">
+                {% if route.response_kind == "Info" %}
+                    <p class="control">
+                    <a class="button has-background-success-50 is-size-5-mobile is-responsive" href="{{ info_route }}/{{ device_index }}">{{ info_link }}</a>
+                    </p>
+                {% endif %}
+                    <p class="control">
+                    <a class="button has-background-success-50 is-size-5-mobile is-responsive" href="{{ event_log_route }}/{{ device_index }}">{{ event_log_link }}</a>
+                    </p>
+                    <p class="control">
+                    <a class="button has-background-success-50 is-size-5-mobile is-responsive" href="{{ response_log_route }}/{{ device_index }}">{{ response_log_link }}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<div id="modal-{{ device.description.kind }}-{{ device_index }}-{{ loop.index0 }}" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <div class="content">
+                <h1 class="has-text-centered"><code>{{ request }}</code></h1>
+                <h2>Description</h2>
+                <p>
+                {% if route.description %}
+                    {{ route.description }}
+                {% else %}
+                    {{ no_route_description_message }}
+                {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+{% endfor %}
+{% endfor %}

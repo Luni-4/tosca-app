@@ -1,0 +1,18 @@
+{% extends "layout" %}
+
+{% block page %}
+
+{% if devices | length == 0 %}
+    <section class="hero is-fullheight center-items text-centered">
+        <div class="container">
+            <h1 class="hero-title">{{ no_devices_message }}</h1>
+            <form action="{{ discovery_route }}" method="post">
+                <button id="discovery" class="button button-info button-large" type="submit">{{ discovery_button }}</button>
+            </form>
+        </div>
+    </section>
+{% else %}
+    {% include "devices" %}
+{% endif %}
+
+{% endblock %}

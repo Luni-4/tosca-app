@@ -1,0 +1,77 @@
+[startup_errors]
+loading_template = "Built-in template internal failure"
+listener = "Listener creation failed"
+server_startup = "Server startup failed"
+assets = "Error in loading the `assets` directory"
+
+[routes]
+discovery = "/discovery"
+request = "/request"
+
+[navbar]
+github_description = "ToscaLabs Organization"
+
+[templates_errors]
+get_error_template = "Error in retrieving the `error` template"
+render_error_template = "Error in rendering the `error` template"
+get_index_template = "Error in retrieving the `index` template"
+render_index_template = "Error in rendering the `index` template"
+
+[discovery_errors]
+discovery_failed = "Error in discovering devices"
+start_device_events_failed = "Error starting the device events receiver"
+
+[parsing_errors]
+u8_parameter = "Error in parsing the `u8` parameter value"
+u16_parameter = "Error in parsing the `u16` parameter value"
+u32_parameter = "Error in parsing the `u32` parameter value"
+u64_parameter = "Error in parsing the `u64` parameter value"
+f32_parameter = "Error in parsing the `f32` parameter value"
+f64_parameter = "Error in parsing the `f64` parameter value"
+ok_response = "Error in parsing the `Ok` response"
+serial_response = "Error in parsing the `Serial` response"
+
+[request_errors]
+not_found_device = "Error in finding the device"
+request_creation = "Error in creating the request for the device"
+send_request_with_default_params = "Error in sending the request with default parameters"
+send_request_with_params = "Error in sending the request with input parameters"
+
+[labels]
+go_to_devices = "Go to devices"
+no_devices = "No devices found."
+missing_route = "No route for"
+#no_route_description = "No description for this route."
+
+[buttons]
+discovery = "Discover Devices"
+
+[footer]
+rights = "All rights reserved."
+
+[logging]
+file_error = "Creation of log error failed"
+debug_file_error = "Creation of log debug failed"
+subscriber_error = "Subscriber initialization failed"
+request_error = "Request error"
+web_app_address_message = "Web controller reachable at this address"
+startup_message = "Starting web app..."
+
+[light]
+modes = "Modes"
+manual_route = "/manual"
+manual_mode = "manual"
+manual = "Manual"
+motion_detection_route = "/motion-detection"
+motion_detection_mode = "motion"
+motion_detection = "Motion Detection"
+ambient_light_route = "/ambient-light"
+ambient_light_mode = "ambient"
+ambient_light = "Ambient Light"
+commands = "Commands"
+on_route = "/on"
+on = "On"
+off_route = "/off"
+off = "Off"
+toggle_route = "/toggle"
+toggle = "Toggle"
