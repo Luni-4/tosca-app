@@ -71,6 +71,39 @@
 {% endfor %}
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Select all forms that send requests to devices
+    const requestForms = document.querySelectorAll('form[action="/request"]');
+
+    requestForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            // Prevent the page from reloading
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const action = form.getAttribute('action');
+
+            try {
+                // Send the data to the server in the background (without reloading the page)
+                await fetch(action, {
+                    method: 'POST',
+                    body: new URLSearchParams(formData),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                });
+
+                // If the form is inside the "modes" section, visually update the 'selected' class
+                if (form.closest('.modes')) {
+                    const buttons = form.closest('.modes').querySelectorAll('button');
+                    buttons.forEach(btn => btn.classList.remove('selected'));
+                    form.querySelector('button').classList.add('selected');
+                }
+            } catch (error) {
+                console.error("Error while sendind the command:", error);
+            }
+        });
+    });
+
     {% for device in devices %}
         {% if device.has_events %}
 

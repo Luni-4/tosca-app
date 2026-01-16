@@ -83,7 +83,7 @@ fn create_parameters<'a>(
 pub(crate) async fn send_request(
     State(state): State<AppState>,
     Form(request): Form<Request>,
-) -> Result<Redirect, Error> {
+) -> Result<impl axum::response::IntoResponse, Error> {
     #[cfg(feature = "logging")]
     tracing::info!("{:?}", request);
 
@@ -172,6 +172,5 @@ pub(crate) async fn send_request(
         device.change_state(&device_state);
     }
 
-    // Redirect to index
-    Ok(Redirect::to("/"))
+    Ok(axum::http::StatusCode::NO_CONTENT)
 }
