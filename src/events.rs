@@ -40,6 +40,9 @@ pub(crate) async fn event_stream(
     // Release the lock.
     drop(devices_receivers);
 
+    // Track the last sent device state for this SSE connection.
+    let mut previous_state  = None;
+
     // Convert the stream into SSE events
     let sse_stream = BroadcastStream::new(receiver)
         .filter_map(move |events| {
@@ -58,6 +61,12 @@ pub(crate) async fn event_stream(
 
             #[cfg(feature = "logging")]
             tracing::info!("{events}");
+
+            // Skip sending SSE event if the light state hasn’t changed.
+            if previous_state == Some(light_status) {
+                return None;
+            }
+            previous_state = Some(light_status);
 
             Some(Ok(Event::default()
                 .id(device_id.to_string())
