@@ -75,3 +75,113 @@ off_route = "/off"
 off = "Off"
 toggle_route = "/toggle"
 toggle = "Toggle"
+
+[hazard_categories]
+Safety = "Safety"
+Privacy = "Privacy"
+Financial = "Financial"
+
+[hazard_categories_Safety]
+description = "Category which includes all safety-related hazards."
+
+[hazard_categories_Privacy]
+description = "Category which includes all privacy-related hazards."
+
+[hazard_categories_Financial]
+description = "Category which includes all financial-related hazards."
+
+[hazards_0]
+name = "Air Poisoning"
+description = "The execution may release toxic gases."
+
+[hazards_1]
+name = "Asphyxia"
+description = "The execution may cause oxygen deficiency by gaseous substances."
+
+[hazards_2]
+name = "Audio Video Display"
+description = "The execution authorises an application to display a video with audio coming from a device."
+
+[hazards_3]
+name = "Audio Video Record And Store"
+description = "The execution authorises an application to record and save a video with audio coming from a device on persistent storage."
+
+[hazards_4]
+name = "Electric Energy Consumption"
+description = "The execution enables a device which consumes electricity."
+
+[hazards_5]
+name = "Explosion"
+description = "The execution may cause an explosion."
+
+[hazards_6]
+name = "Fire Hazard"
+description = "The execution may cause fire."
+
+[hazards_7]
+name = "Gas Consumption"
+description = "The execution enables a device which consumes gas."
+
+[hazards_8]
+name = "Log Energy Consumption"
+description = "The execution authorises an application to get and save information about a device's energy impact."
+
+[hazards_9]
+name = "Log Usage Time"
+description = "The execution authorises an application to get and save information about a device's duration of use."
+
+[hazards_10]
+name = "Pay Subscription Fee"
+description = "The execution authorises an application to use payment information and make a periodic payment."
+
+[hazards_11]
+name = "Power Outage"
+description = "The execution may cause an interruption in the supply of electricity."
+
+[hazards_12]
+name = "Power Surge"
+description = "The execution may lead to exposure to high voltages."
+
+[hazards_13]
+name = "Record Issued Commands"
+description = "The execution authorises an application to get and save user inputs."
+
+[hazards_14]
+name = "Record User Preferences"
+description = "The execution authorises an application to get and save information about user's preferences."
+
+[hazards_15]
+name = "Spend Money"
+description = "The execution authorises an application to use payment information and make a payment transaction."
+
+[hazards_16]
+name = "Spoiled Food"
+description = "The execution may lead to rotten food."
+
+[hazards_17]
+name = "Take Device Screenshots"
+description = "The execution authorises an application to read and take screenshots from the display output."
+
+[hazards_18]
+name = "Take Pictures"
+description = "The execution authorises an application to use a camera and take photos."
+
+[hazards_19]
+name = "Unauthorised Physical Access"
+description = "The execution disables a protection mechanism, therefore unauthorised individuals may physically access to the environment."
+
+[hazards_20]
+name = "Video Display"
+description = "The execution authorises an application to display a video coming from a device."
+
+[hazards_21]
+name = "Video Record And Store"
+description = "The execution authorises an application to record and save a video coming from a device on persistent storage."
+
+[hazards_22]
+name = "Water Consumption"
+description = "The execution enables a device which consumes water."
+
+[hazards_23]
+name = "Water Flooding"
+description = "The execution enables a device to water usage, which may lead to flood."

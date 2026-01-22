@@ -75,3 +75,113 @@ off_route = "/off"
 off = "Spegni"
 toggle_route = "/toggle"
 toggle = "Lampeggia"
+
+[hazard_categories]
+Safety = "Sicurezza"
+Privacy = "Privacy"
+Financial = "Finanziario"
+
+[hazard_categories_Safety]
+description = "Categoria che include tutti i rischi legati alla sicurezza fisica e ambientale."
+
+[hazard_categories_Privacy]
+description = "Categoria che include tutti i rischi legati alla privacy e al trattamento dei dati."
+
+[hazard_categories_Financial]
+description = "Categoria che include tutti i rischi economici e finanziari."
+
+[hazards_0]
+name = "Avvelenamento Dell’Aria"
+description = "L’esecuzione può rilasciare gas tossici nell’ambiente."
+
+[hazards_1]
+name = "Asfissia"
+description = "L’esecuzione può causare una carenza di ossigeno dovuta a sostanze gassose."
+
+[hazards_2]
+name = "Riproduzione Audio E Video"
+description = "L’esecuzione consente a un’applicazione di riprodurre video con audio provenienti da un dispositivo."
+
+[hazards_3]
+name = "Registrazione Audio E Video"
+description = "L’esecuzione consente a un’applicazione di registrare e salvare video con audio su memoria persistente."
+
+[hazards_4]
+name = "Consumo Di Energia Elettrica"
+description = "L’esecuzione attiva un dispositivo che consuma energia elettrica."
+
+[hazards_5]
+name = "Esplosione"
+description = "L’esecuzione può causare un’esplosione."
+
+[hazards_6]
+name = "Rischio Di Incendio"
+description = "L’esecuzione può causare un incendio."
+
+[hazards_7]
+name = "Consumo Di Gas"
+description = "L’esecuzione attiva un dispositivo che consuma gas."
+
+[hazards_8]
+name = "Registrazione Del Consumo Energetico"
+description = "L’esecuzione consente a un’applicazione di raccogliere e salvare informazioni sull’impatto energetico del dispositivo."
+
+[hazards_9]
+name = "Registrazione Del Tempo Di Utilizzo"
+description = "L’esecuzione consente a un’applicazione di raccogliere e salvare informazioni sulla durata di utilizzo del dispositivo."
+
+[hazards_10]
+name = "Pagamento Di Abbonamento"
+description = "L’esecuzione consente a un’applicazione di utilizzare informazioni di pagamento per effettuare pagamenti periodici."
+
+[hazards_11]
+name = "Interruzione Di Corrente"
+description = "L’esecuzione può causare un’interruzione nella fornitura di energia elettrica."
+
+[hazards_12]
+name = "Sovratensione"
+description = "L’esecuzione può esporre a tensioni elettriche elevate."
+
+[hazards_13]
+name = "Registrazione Dei Comandi"
+description = "L’esecuzione consente a un’applicazione di raccogliere e salvare i comandi impartiti dall’utente."
+
+[hazards_14]
+name = "Registrazione Delle Preferenze Utente"
+description = "L’esecuzione consente a un’applicazione di raccogliere e salvare informazioni sulle preferenze dell’utente."
+
+[hazards_15]
+name = "Spesa Di Denaro"
+description = "L’esecuzione consente a un’applicazione di effettuare transazioni economiche."
+
+[hazards_16]
+name = "Cibo Avariato"
+description = "L’esecuzione può causare il deterioramento degli alimenti."
+
+[hazards_17]
+name = "Screenshot Del Dispositivo"
+description = "L’esecuzione consente a un’applicazione di acquisire schermate dall’output video del dispositivo."
+
+[hazards_18]
+name = "Scatto Di Fotografie"
+description = "L’esecuzione consente a un’applicazione di utilizzare una fotocamera per scattare fotografie."
+
+[hazards_19]
+name = "Accesso Fisico Non Autorizzato"
+description = "L’esecuzione disabilita un meccanismo di protezione, consentendo l’accesso fisico a persone non autorizzate."
+
+[hazards_20]
+name = "Riproduzione Video"
+description = "L’esecuzione consente a un’applicazione di riprodurre video provenienti da un dispositivo."
+
+[hazards_21]
+name = "Registrazione Video"
+description = "L’esecuzione consente a un’applicazione di registrare e salvare video su memoria persistente."
+
+[hazards_22]
+name = "Consumo Di Acqua"
+description = "L’esecuzione attiva un dispositivo che consuma acqua."
+
+[hazards_23]
+name = "Allagamento"
+description = "L’esecuzione può causare un utilizzo anomalo di acqua che può portare a un allagamento."

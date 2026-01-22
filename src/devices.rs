@@ -1,3 +1,5 @@
+use std::{borrow::Cow, collections::HashMap};
+
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
@@ -6,6 +8,27 @@ pub(crate) enum LightMode {
     Manual,
     MotionDetection,
     AmbientLight,
+}
+
+#[derive(Serialize)]
+pub(crate) struct LocalizedHazard {
+    id: u16,
+    name: Cow<'static, str>,
+    description: Cow<'static, str>,
+    category_name: Cow<'static, str>,
+    category_description: Cow<'static, str>,
+}
+
+impl LocalizedHazard {
+    pub(crate) fn new(id: u16, category_name: &'static str) -> LocalizedHazard {
+        Self {
+            id: id,
+            name: t!(format!("hazards_{}.name", id)),
+            description: t!(format!("hazards_{}.description", id)),
+            category_name: t!(format!("hazard_categories.{}", category_name)),
+            category_description: t!(format!("hazard_categories_{}.description", category_name)),
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -27,11 +50,12 @@ pub(crate) struct DemoLightInfo {
     off: String,
     toggle_route: String,
     toggle: String,
+    hazards: HashMap<String, Vec<LocalizedHazard>>,
 }
 
 impl DemoLightInfo {
     #[inline]
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(hazards: HashMap<String, Vec<LocalizedHazard>>) -> Self {
         Self {
             modes: t!("light.modes").into_owned(),
             manual_route: t!("light.manual_route").into_owned(),
@@ -50,6 +74,7 @@ impl DemoLightInfo {
             off: t!("light.off").into_owned(),
             toggle_route: t!("light.toggle_route").into_owned(),
             toggle: t!("light.toggle").into_owned(),
+            hazards,
         }
     }
 }
@@ -65,20 +90,20 @@ pub(crate) struct DemoLight {
 
 impl DemoLight {
     #[inline]
-    pub(crate) fn new(id: usize) -> Self {
+    pub(crate) fn new(id: usize, hazards: HashMap<String, Vec<LocalizedHazard>>) -> Self {
         Self {
             id,
-            info: DemoLightInfo::new(),
+            info: DemoLightInfo::new(hazards),
             mode: LightMode::default(),
             has_events: false,
         }
     }
 
     #[inline]
-    pub(crate) fn with_events(id: usize) -> Self {
+    pub(crate) fn with_events(id: usize, hazards: HashMap<String, Vec<LocalizedHazard>>) -> Self {
         Self {
             id,
-            info: DemoLightInfo::new(),
+            info: DemoLightInfo::new(hazards),
             mode: LightMode::default(),
             has_events: true,
         }
