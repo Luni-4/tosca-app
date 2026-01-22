@@ -26,12 +26,6 @@ To build without `logging` feature
 cargo build --no-default-features
 ```
 
-To build with errors and messages in `Italian` language
-
-```console
-cargo build --features italian
-```
-
 <!-- Links -->
 [license]: https://github.com/ToscaLabs/tosca-app/blob/master/LICENSE
 
