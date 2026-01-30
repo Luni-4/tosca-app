@@ -1,0 +1,113 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Cargo.lock'
+      - '**.rs'
+      - '**.sh'
+      - '**.yml'
+      - '**.toml'
+      - '!**.md'
+      - '!LICENSE'
+    tags:
+      - 'v*.*.*' # Run when a new version is being published
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+    paths:
+      - 'Cargo.lock'
+      - '**.rs'
+      - '**.sh'
+      - '**.yml'
+      - '**.toml'
+      - '!**.md'
+      - '!LICENSE'
+
+env:
+  RUST_MINIMAL_VERSION: 1.90.0
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # Enable consistent use of `RUST_MINIMAL_VERSION` across different jobs
+  prepare-checks:
+    runs-on: ubuntu-latest
+
+    outputs:
+      rust-minimal-version: ${{ env.RUST_MINIMAL_VERSION }}
+
+    steps:
+      - name: Set rust-minimal-version output
+        run: echo "rust-minimal-version=${RUST_MINIMAL_VERSION}" >> $GITHUB_OUTPUT
+
+################################## FORMAT AND LINTS LAYER ######################
+
+  rustfmt-clippy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Run rustfmt
+        run: cargo fmt --all -- --check --verbose
+
+      - name: Run cargo clippy
+        run: cargo clippy --all-targets -- -Dclippy::all -Dclippy::pedantic
+
+################################## BUILD AND DOCS LAYER ########################
+
+  build:
+    needs: [rustfmt-clippy, prepare-checks]
+
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest, ubuntu-24.04-arm]
+        rust: [stable, minimal-version]
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Debug matrix and minimal version
+        run: |
+          echo "Matrix rust: ${{ matrix.rust }}"
+          echo "Prepare-checks rust-minimal-version: ${{ needs.prepare-checks.outputs.rust-minimal-version }}"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust == 'minimal-version' && needs.prepare-checks.outputs.rust-minimal-version || 'stable' }}
+
+      - name: Build
+        run: cargo build --all-targets --verbose
+
+  docs:
+    needs: [build]
+
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest, ubuntu-24.04-arm]
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Generate docs
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc --verbose --no-deps
