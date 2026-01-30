@@ -3,9 +3,9 @@ use std::collections::HashMap;
 use axum::extract::State;
 use axum::response::Redirect;
 
-use crate::devices::{DemoLight, Devices, LocalizedHazard};
-use crate::error::{error_with_info, Error};
 use crate::AppState;
+use crate::devices::{DemoLight, Devices, LocalizedHazard};
+use crate::error::{Error, error_with_info};
 
 // Find `tosca` devices in the network.
 pub(crate) async fn run_discovery(State(state): State<AppState>) -> Result<Redirect, Error> {

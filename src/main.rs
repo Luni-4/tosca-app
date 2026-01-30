@@ -23,9 +23,9 @@ use tosca::events::Events;
 use tosca_controller::controller::Controller;
 
 use axum::{
+    Router,
     handler::HandlerWithoutStateExt,
     routing::{get, post},
-    Router,
 };
 
 use clap::Parser;
@@ -34,8 +34,8 @@ use minijinja::Environment;
 
 use rust_i18n::t;
 
-use tokio::sync::broadcast::Receiver;
 use tokio::sync::Mutex;
+use tokio::sync::broadcast::Receiver;
 
 use tower_http::services::ServeDir;
 

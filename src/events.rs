@@ -9,8 +9,8 @@ use axum::{
 
 use futures::stream::Stream;
 
-use tokio_stream::wrappers::BroadcastStream;
 use tokio_stream::StreamExt as _;
+use tokio_stream::wrappers::BroadcastStream;
 
 use crate::AppState;
 
@@ -41,7 +41,7 @@ pub(crate) async fn event_stream(
     drop(devices_receivers);
 
     // Track the last sent device state for this SSE connection.
-    let mut previous_state  = None;
+    let mut previous_state = None;
 
     // Convert the stream into SSE events
     let sse_stream = BroadcastStream::new(receiver)
