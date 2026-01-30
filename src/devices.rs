@@ -22,7 +22,7 @@ pub(crate) struct LocalizedHazard {
 impl LocalizedHazard {
     pub(crate) fn new(id: u16, category_name: &'static str) -> LocalizedHazard {
         Self {
-            id: id,
+            id,
             name: t!(format!("hazards_{}.name", id)),
             description: t!(format!("hazards_{}.description", id)),
             category_name: t!(format!("hazard_categories.{}", category_name)),
@@ -134,6 +134,6 @@ impl Devices {
 
     #[inline]
     pub(crate) fn add_device(&mut self, light: DemoLight) {
-        self.0.push(light)
+        self.0.push(light);
     }
 }

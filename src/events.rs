@@ -23,18 +23,17 @@ pub(crate) async fn event_stream(
 ) -> Result<Sse<impl Stream<Item = Result<Event, Infallible>>>, StatusCode> {
     let devices_receivers = state.devices_receivers.lock().await;
 
-    let receiver = match devices_receivers.get(&device_id) {
-        Some(receiver) => receiver.resubscribe(),
-        None => {
-            #[cfg(feature = "logging")]
-            tracing::error!("Events: {}", format!("Device `{device_id}` does not exist"));
-            // The browser receives no output, the server continues running,
-            // and the issue is logged.
-            //
-            // This allows the user to continue using the application even if
-            // the device is not found.
-            return Err(StatusCode::NO_CONTENT);
-        }
+    let receiver = if let Some(receiver) = devices_receivers.get(&device_id) {
+        receiver.resubscribe()
+    } else {
+        #[cfg(feature = "logging")]
+        tracing::error!("Events: {}", format!("Device `{device_id}` does not exist"));
+        // The browser receives no output, the server continues running,
+        // and the issue is logged.
+        //
+        // This allows the user to continue using the application even if
+        // the device is not found.
+        return Err(StatusCode::NO_CONTENT);
     };
 
     // Release the lock.
