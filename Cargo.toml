@@ -27,7 +27,7 @@ clap.features = ["derive", "std"]
 futures.version = "0.3.31"
 futures.default-features = false
 
-minijinja.version = "2.13"
+minijinja.version = "2.15"
 
 rust-i18n.version = "3.1.5"
 
