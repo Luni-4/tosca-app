@@ -4,18 +4,18 @@ listener = "Creazione del listener fallita"
 server_startup = "Avvio server fallito"
 assets = "Errore nel caricamento della cartella `assets`"
 
-[routes]
-discovery = "/scopri-device"
-request = "/richieste"
-
 [navbar]
 github_description = "Organizzazione ToscaLabs"
+home_name = "Home"
+privacy_name = "Privacy"
 
 [templates_errors]
 get_error_template = "Errore nel trovare il template `error`"
 render_error_template = "Errore nel rendering del template `error`"
 get_index_template = "Errore nel trovare il template `index`"
 render_index_template = "Errore nel renderizzare il template `index`"
+get_privacy_template = "Errore nel trovare il template `privacy`"
+render_privacy_template = "Errore nel renderizzare il template `privacy`"
 
 [discovery_errors]
 discovery_failed = "Errore nell'individuare i dispositivi"
@@ -57,24 +57,38 @@ request_error = "Errore nella richiesta"
 web_app_address_message = "Accedi all'applicazione da questo indirizzo"
 startup_message = "Avvio applicazione..."
 
+[privacy_hazards_card]
+title = "Categorie di Rischi"
+description_title = "Modalità d'uso"
+description = """
+Seleziona una o più categorie di rischio per disabilitare tutti i comandi dei
+dispositivi associati alle categorie selezionate.
+"""
+
+[device]
+title_description = "Descrizione"
+route_title_description = "Descrizione comando"
+hazard_title_description = "Rischi"
+
 [light]
+description = "Questa è una semplice luce"
 modes = "Modalità"
-manual_route = "/manual"
-manual_mode = "manual"
 manual = "Manuale"
-motion_detection_route = "/motion-detection"
-motion_detection_mode = "motion"
 motion_detection = "Rileva movimento"
-ambient_light_route = "/ambient-light"
-ambient_light_mode = "ambient"
 ambient_light = "Luce Ambientale"
 commands = "Comandi"
-on_route = "/on"
-on = "Accendi"
-off_route = "/off"
-off = "Spegni"
-toggle_route = "/toggle"
-toggle = "Lampeggia"
+
+["/on"]
+name = "Accendi"
+description = "Accende la luce"
+
+["/off"]
+name = "Spegni"
+description = "Spegne la luce"
+
+["/toggle"]
+name = "Lampeggia"
+description = "Fa lampeggiare la luce"
 
 [hazard_categories]
 Safety = "Sicurezza"

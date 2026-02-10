@@ -4,18 +4,18 @@ listener = "Listener creation failed"
 server_startup = "Server startup failed"
 assets = "Error in loading the `assets` directory"
 
-[routes]
-discovery = "/discovery"
-request = "/request"
-
 [navbar]
 github_description = "ToscaLabs Organization"
+home_name = "Home"
+privacy_name = "Privacy"
 
 [templates_errors]
 get_error_template = "Error in retrieving the `error` template"
 render_error_template = "Error in rendering the `error` template"
 get_index_template = "Error in retrieving the `index` template"
 render_index_template = "Error in rendering the `index` template"
+get_privacy_template = "Error in retrieving the `privacy` template"
+render_privacy_template = "Error in rendering the `privacy` template"
 
 [discovery_errors]
 discovery_failed = "Error in discovering devices"
@@ -41,7 +41,6 @@ send_request_with_params = "Error in sending the request with input parameters"
 go_to_devices = "Go to devices"
 no_devices = "No devices found."
 missing_route = "No route for"
-#no_route_description = "No description for this route."
 
 [buttons]
 discovery = "Discover Devices"
@@ -57,24 +56,38 @@ request_error = "Request error"
 web_app_address_message = "Web controller reachable at this address"
 startup_message = "Starting web app..."
 
+[privacy_hazards_card]
+title = "Hazard Categories"
+description_title = "Usage modes"
+description = """
+Select one or more hazard categories to disable all device commands associated
+with the selected categories.
+"""
+
+[device]
+title_description = "Description"
+route_title_description = "Route Description"
+hazard_title_description = "Hazards"
+
 [light]
+description = "This is a simple light"
 modes = "Modes"
-manual_route = "/manual"
-manual_mode = "manual"
 manual = "Manual"
-motion_detection_route = "/motion-detection"
-motion_detection_mode = "motion"
 motion_detection = "Motion Detection"
-ambient_light_route = "/ambient-light"
-ambient_light_mode = "ambient"
 ambient_light = "Ambient Light"
 commands = "Commands"
-on_route = "/on"
-on = "On"
-off_route = "/off"
-off = "Off"
-toggle_route = "/toggle"
-toggle = "Toggle"
+
+["/on"]
+name = "On"
+description = "Turn the light on"
+
+["/off"]
+name = "Off"
+description = "Turn the light off"
+
+["/toggle"]
+name = "Toggle"
+description = "Toggle the light"
 
 [hazard_categories]
 Safety = "Safety"
