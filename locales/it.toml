@@ -77,7 +77,7 @@ route_title_description = "Descrizione comando"
 hazard_title_description = "Rischi"
 
 [light]
-description = "Questa è una semplice luce"
+description = "Questa è una luce dotata di un sensore di temperatura."
 modes = "Modalità"
 manual = "Manuale"
 motion_detection = "Rileva movimento"
@@ -86,15 +86,15 @@ commands = "Comandi"
 
 ["/on"]
 name = "Accendi"
-description = "Accende la luce"
+description = "Accende la luce."
 
 ["/off"]
 name = "Spegni"
-description = "Spegne la luce"
+description = "Spegne la luce."
 
 ["/toggle"]
 name = "Lampeggia"
-description = "Fa lampeggiare la luce"
+description = "Fa lampeggiare la luce."
 
 [hazard_categories]
 Safety = "Sicurezza"

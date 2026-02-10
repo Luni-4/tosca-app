@@ -76,7 +76,7 @@ route_title_description = "Route Description"
 hazard_title_description = "Hazards"
 
 [light]
-description = "This is a simple light"
+description = "This is a light equipped with a temperature sensor."
 modes = "Modes"
 manual = "Manual"
 motion_detection = "Motion Detection"
@@ -85,15 +85,15 @@ commands = "Commands"
 
 ["/on"]
 name = "On"
-description = "Turn the light on"
+description = "Turn the light on."
 
 ["/off"]
 name = "Off"
-description = "Turn the light off"
+description = "Turn the light off."
 
 ["/toggle"]
 name = "Toggle"
-description = "Toggle the light"
+description = "Turn light on/off."
 
 [hazard_categories]
 Safety = "Safety"
