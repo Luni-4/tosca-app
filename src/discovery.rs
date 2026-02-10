@@ -4,7 +4,7 @@ use axum::extract::State;
 use axum::response::Redirect;
 
 use crate::AppState;
-use crate::devices::{DemoLight, Devices, LocalizedHazard};
+use crate::devices::{DemoLight, Devices, LocalizedHazard, Route, RouteData, RouteMetadata};
 use crate::error::{Error, error_with_info};
 
 // Find `tosca` devices in the network.
@@ -32,19 +32,29 @@ pub(crate) async fn run_discovery(State(state): State<AppState>) -> Result<Redir
         // A device id is given by the order.
         for (id, device) in controller.devices_mut().iter_mut().enumerate() {
             // Retrieve the hazards associated with this device for each request
-            let mut hazards = HashMap::new();
-            for ri in device.requests_info() {
-                if ri.hazards.is_empty() {
+            let mut routes = HashMap::new();
+            for (id, ri) in device.requests_info().iter().enumerate() {
+                // Do not consider state routes.
+                if DemoLight::is_state_route(ri.route) {
                     continue;
                 }
 
-                hazards.insert(
-                    ri.route.to_string(),
+                let hazards = if ri.hazards.is_empty() {
+                    Vec::new()
+                } else {
                     ri.hazards
                         .into_iter()
                         .map(|h| LocalizedHazard::new(h.id(), h.category().name()))
-                        .collect(),
+                        .collect()
+                };
+
+                let metadata = RouteMetadata::new(
+                    t!(format!("{}.name", ri.route)),
+                    t!(format!("{}.description", ri.route)),
                 );
+                let data = RouteData::new(id, hazards);
+
+                routes.insert(ri.route.to_string(), Route::new(metadata, data));
             }
 
             let demo_light = if device.has_events() {
@@ -54,9 +64,9 @@ pub(crate) async fn run_discovery(State(state): State<AppState>) -> Result<Redir
                     &t!("discovery_errors.start_device_events_failed"),
                 )?;
                 devices_receivers.insert(id, receiver);
-                DemoLight::with_events(id, hazards)
+                DemoLight::with_events(id, routes)
             } else {
-                DemoLight::new(id, hazards)
+                DemoLight::new(id, routes)
             };
 
             devices.add_device(demo_light);

@@ -11,12 +11,57 @@ pub(crate) enum LightMode {
 }
 
 #[derive(Serialize)]
+pub(crate) struct StateRoutes {
+    manual_route: &'static str,
+    manual_mode: &'static str,
+    manual: Cow<'static, str>,
+    motion_detection_route: &'static str,
+    motion_detection_mode: &'static str,
+    motion_detection: Cow<'static, str>,
+    ambient_light_route: &'static str,
+    ambient_light_mode: &'static str,
+    ambient_light: Cow<'static, str>,
+}
+
+impl StateRoutes {
+    #[inline]
+    pub(crate) fn new() -> Self {
+        Self {
+            manual_route: "/manual",
+            manual_mode: "manual",
+            manual: t!("light.manual"),
+            motion_detection_route: "/motion-detection",
+            motion_detection_mode: "motion",
+            motion_detection: t!("light.motion_detection"),
+            ambient_light_route: "/ambient-light",
+            ambient_light_mode: "ambient",
+            ambient_light: t!("light.ambient_light"),
+        }
+    }
+}
+
+#[derive(Serialize)]
+pub(crate) struct RouteMetadata {
+    name: Cow<'static, str>,
+    description: Cow<'static, str>,
+}
+
+impl RouteMetadata {
+    #[inline]
+    pub(crate) fn new(name: Cow<'static, str>, description: Cow<'static, str>) -> Self {
+        Self { name, description }
+    }
+}
+
+#[derive(Serialize)]
 pub(crate) struct LocalizedHazard {
     id: u16,
     name: Cow<'static, str>,
     description: Cow<'static, str>,
-    category_name: Cow<'static, str>,
-    category_description: Cow<'static, str>,
+    category_name: &'static str,
+    // TODO: Use a state structure to record the disabled value in order to
+    // present it to the UI
+    is_disabled: bool,
 }
 
 impl LocalizedHazard {
@@ -25,56 +70,60 @@ impl LocalizedHazard {
             id,
             name: t!(format!("hazards_{}.name", id)),
             description: t!(format!("hazards_{}.description", id)),
-            category_name: t!(format!("hazard_categories.{}", category_name)),
-            category_description: t!(format!("hazard_categories_{}.description", category_name)),
+            category_name,
+            is_disabled: false,
         }
     }
 }
 
 #[derive(Serialize)]
+pub(crate) struct RouteData {
+    id: usize,
+    hazards: Vec<LocalizedHazard>,
+}
+
+impl RouteData {
+    pub(crate) fn new(id: usize, hazards: Vec<LocalizedHazard>) -> Self {
+        Self { id, hazards }
+    }
+}
+
+#[derive(Serialize)]
+pub(crate) struct Route {
+    metadata: RouteMetadata,
+    data: RouteData,
+}
+
+impl Route {
+    pub(crate) fn new(metadata: RouteMetadata, data: RouteData) -> Self {
+        Self { metadata, data }
+    }
+}
+
+#[derive(Serialize)]
 pub(crate) struct DemoLightInfo {
-    modes: String,
-    manual_route: String,
-    manual: String,
-    manual_mode: String,
-    motion_detection_route: String,
-    motion_detection_mode: String,
-    motion_detection: String,
-    ambient_light_route: String,
-    ambient_light_mode: String,
-    ambient_light: String,
-    commands: String,
-    on_route: String,
-    on: String,
-    off_route: String,
-    off: String,
-    toggle_route: String,
-    toggle: String,
-    hazards: HashMap<String, Vec<LocalizedHazard>>,
+    title_description: Cow<'static, str>,
+    description: Cow<'static, str>,
+    modes: Cow<'static, str>,
+    state_routes: StateRoutes,
+    commands: Cow<'static, str>,
+    route_title_description: Cow<'static, str>,
+    hazard_title_description: Cow<'static, str>,
+    routes: HashMap<String, Route>,
 }
 
 impl DemoLightInfo {
     #[inline]
-    pub(crate) fn new(hazards: HashMap<String, Vec<LocalizedHazard>>) -> Self {
+    pub(crate) fn new(routes: HashMap<String, Route>) -> Self {
         Self {
-            modes: t!("light.modes").into_owned(),
-            manual_route: t!("light.manual_route").into_owned(),
-            manual_mode: t!("light.manual_mode").into_owned(),
-            manual: t!("light.manual").into_owned(),
-            motion_detection_route: t!("light.motion_detection_route").into_owned(),
-            motion_detection_mode: t!("light.motion_detection_mode").into_owned(),
-            motion_detection: t!("light.motion_detection").into_owned(),
-            ambient_light_route: t!("light.ambient_light_route").into_owned(),
-            ambient_light_mode: t!("light.ambient_light_mode").into_owned(),
-            ambient_light: t!("light.ambient_light").into_owned(),
-            commands: t!("light.commands").into_owned(),
-            on_route: t!("light.on_route").into_owned(),
-            on: t!("light.on").into_owned(),
-            off_route: t!("light.off_route").into_owned(),
-            off: t!("light.off").into_owned(),
-            toggle_route: t!("light.toggle_route").into_owned(),
-            toggle: t!("light.toggle").into_owned(),
-            hazards,
+            title_description: t!("device.title_description"),
+            description: t!("light.description"),
+            modes: t!("light.modes"),
+            state_routes: StateRoutes::new(),
+            commands: t!("light.commands"),
+            route_title_description: t!("device.route_title_description"),
+            hazard_title_description: t!("device.hazard_title_description"),
+            routes,
         }
     }
 }
@@ -90,25 +139,26 @@ pub(crate) struct DemoLight {
 
 impl DemoLight {
     #[inline]
-    pub(crate) fn new(id: usize, hazards: HashMap<String, Vec<LocalizedHazard>>) -> Self {
+    pub(crate) fn new(id: usize, routes: HashMap<String, Route>) -> Self {
         Self {
             id,
-            info: DemoLightInfo::new(hazards),
+            info: DemoLightInfo::new(routes),
             mode: LightMode::default(),
             has_events: false,
         }
     }
 
     #[inline]
-    pub(crate) fn with_events(id: usize, hazards: HashMap<String, Vec<LocalizedHazard>>) -> Self {
+    pub(crate) fn with_events(id: usize, routes: HashMap<String, Route>) -> Self {
         Self {
             id,
-            info: DemoLightInfo::new(hazards),
+            info: DemoLightInfo::new(routes),
             mode: LightMode::default(),
             has_events: true,
         }
     }
 
+    #[inline]
     pub(crate) fn change_state(&mut self, state: &str) {
         self.mode = match state {
             "motion" => LightMode::MotionDetection,
@@ -116,6 +166,11 @@ impl DemoLight {
             // If no valid mode is passed, the default mode will be used.
             _ => LightMode::default(),
         };
+    }
+
+    #[inline]
+    pub(crate) fn is_state_route(route: &str) -> bool {
+        route == "/manual" || route == "/motion-detection" || route == "/ambient-light"
     }
 }
 

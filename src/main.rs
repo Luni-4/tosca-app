@@ -9,6 +9,7 @@ mod index;
 mod layout;
 #[cfg(feature = "logging")]
 mod logging;
+mod privacy;
 mod request;
 mod utils;
 
@@ -30,7 +31,7 @@ use axum::{
 
 use clap::Parser;
 
-use minijinja::Environment;
+use minijinja::{Environment, value::Value};
 
 use rust_i18n::t;
 
@@ -44,6 +45,8 @@ use crate::discovery::run_discovery;
 use crate::error::{missing_assets, missing_route};
 use crate::events::event_stream;
 use crate::index::index;
+use crate::layout::Layout;
+use crate::privacy::privacy;
 use crate::request::send_request;
 use crate::utils::{add_functions_to_env, create_controller};
 
@@ -74,8 +77,8 @@ static TEMPLATES: &[(&str, &str)] = &builtin_templates![
     // Index page.
     ("index", "index.html"),
     ("devices", "devices.html"),
-    ("modal-devices", "modal-devices.html"),
-    ("modal-hazards", "modal-hazards.html"),
+    // Privacy page.
+    ("privacy", "privacy.html"),
     // Error page.
     ("error", "error.html")
 ];
@@ -166,7 +169,8 @@ async fn main() {
     let cli = Cli::parse();
 
     // Set locale language.
-    rust_i18n::set_locale(cli.lang.as_str());
+    let lang = cli.lang.as_str();
+    rust_i18n::set_locale(lang);
 
     // Initialize subscriber.
     #[cfg(feature = "logging")]
@@ -182,6 +186,9 @@ async fn main() {
     // Add global functions to minijinja environment.
     add_functions_to_env(&mut env);
 
+    // Add global variable
+    env.add_global("app", Value::from_serialize(Layout::new(lang)));
+
     // Create controller.
     let controller = create_controller();
 
@@ -196,9 +203,10 @@ async fn main() {
     // Define routes
     let app = Router::new()
         .route("/", get(index))
+        .route("/privacy", get(privacy))
         .route("/events/{device_id}", get(event_stream))
-        .route(&t!("routes.discovery"), post(run_discovery))
-        .route(&t!("routes.request"), post(send_request))
+        .route("/discovery", post(run_discovery))
+        .route("/request", post(send_request))
         .nest_service("/assets/", serve_dir.clone())
         .fallback_service(serve_dir)
         .fallback(missing_route)
@@ -217,10 +225,11 @@ async fn main() {
     {
         // Navbar route.
         tracing::info!(r#"Home: [GET, "/"]"#);
+        tracing::info!(r#"Privacy: [GET, "/privacy"]"#);
 
         // Device controller commands.
-        tracing::info!(r"Discovery: [POST, {}]", &t!("routes.discovery"));
-        tracing::info!(r"Send request: [POST, {}]", &t!("routes.request"));
+        tracing::info!(r#"Discovery: [POST, "/discovery"]"#);
+        tracing::info!(r#"Send request: [POST, "/request"]"#);
 
         // Assets service.
         tracing::info!(r#"Assets: [SERVICE, "/assets"]"#);

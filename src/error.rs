@@ -11,15 +11,12 @@ use minijinja::Environment;
 use serde::Serialize;
 
 use crate::AppState;
-use crate::layout::RenderLayout;
 
 #[derive(Serialize)]
 struct RenderError<'a> {
-    #[serde(flatten)]
-    layout: RenderLayout<'a>,
     description: &'a str,
     info: Option<String>,
-    goto_message: Cow<'a, str>,
+    goto_message: Cow<'static, str>,
     index: &'static str,
 }
 
@@ -34,7 +31,6 @@ impl<'a> RenderError<'a> {
 
     fn new(description: &'a str, info: Option<String>) -> Self {
         Self {
-            layout: RenderLayout::new(),
             description,
             info,
             goto_message: t!("labels.go_to_devices"),

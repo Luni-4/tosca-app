@@ -8,14 +8,14 @@ use serde::Serialize;
 use crate::AppState;
 use crate::devices::Devices;
 use crate::error::{Error, error_with_info};
-use crate::layout::RenderLayout;
+use crate::layout::INDEX_LINK;
 
 #[derive(Serialize)]
-struct RenderMessages<'a> {
-    no_devices_message: Cow<'a, str>,
+struct RenderMessages {
+    no_devices_message: Cow<'static, str>,
 }
 
-impl RenderMessages<'_> {
+impl RenderMessages {
     #[inline]
     fn new() -> Self {
         Self {
@@ -25,28 +25,16 @@ impl RenderMessages<'_> {
 }
 
 #[derive(Serialize)]
-struct RenderRoutes<'a> {
-    discovery_route: Cow<'a, str>,
+struct RenderButtons {
+    discovery_route: &'static str,
+    discovery_button: Cow<'static, str>,
 }
 
-impl RenderRoutes<'_> {
+impl RenderButtons {
     #[inline]
     fn new() -> Self {
         Self {
-            discovery_route: t!("routes.discovery"),
-        }
-    }
-}
-
-#[derive(Serialize)]
-struct RenderButtons<'a> {
-    discovery_button: Cow<'a, str>,
-}
-
-impl RenderButtons<'_> {
-    #[inline]
-    fn new() -> Self {
-        Self {
+            discovery_route: "/discovery",
             discovery_button: t!("buttons.discovery"),
         }
     }
@@ -54,26 +42,20 @@ impl RenderButtons<'_> {
 
 #[derive(Serialize)]
 struct RenderIndex<'a> {
+    nav_link_selected: &'static str,
     #[serde(flatten)]
-    layout: RenderLayout<'a>,
+    general_render: RenderMessages,
     #[serde(flatten)]
-    general_render: RenderMessages<'a>,
-    #[serde(flatten)]
-    routes_render: RenderRoutes<'a>,
-    #[serde(flatten)]
-    buttons_render: RenderButtons<'a>,
+    buttons_render: RenderButtons,
     // Devices.
     devices: &'a Devices,
-    // Hazards.
-    //hazards: &'a [HazardData],
 }
 
 impl<'a> RenderIndex<'a> {
     fn new(devices: &'a Devices) -> Self {
         Self {
-            layout: RenderLayout::new(),
+            nav_link_selected: INDEX_LINK,
             general_render: RenderMessages::new(),
-            routes_render: RenderRoutes::new(),
             buttons_render: RenderButtons::new(),
             devices,
         }
@@ -87,15 +69,12 @@ pub(crate) async fn index(State(state): State<AppState>) -> Result<Html<String>,
         &t!("templates_error.get_index_template"),
     )?;
 
-    // TODO: Only the hazards associated with each discovered device must be considered.
-    //let all_hazards = retrieve_all_hazards();
-
     let devices = state.devices.lock().await;
 
     let rendered = error_with_info(
         &state.env,
         template.render(RenderIndex::new(&devices)),
-        &t!("templates_error.render_index_template"),
+        &t!("templates_errors.render_index_template"),
     )?;
 
     Ok(Html(rendered))
