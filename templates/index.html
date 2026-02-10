@@ -3,7 +3,7 @@
 {% block page %}
 
 {% if devices | length == 0 %}
-    <section class="hero is-fullheight center-items text-centered">
+    <section class="unique-section hero">
         <div class="container">
             <h1 class="hero-title">{{ no_devices_message }}</h1>
             <form action="{{ discovery_route }}" method="post">

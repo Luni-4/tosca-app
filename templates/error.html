@@ -1,16 +1,12 @@
 {% extends "layout" %}
 {% block page %}
-<section class="section is-max-desktop is-fullheight">
-    <div class="container has-text-centered">
-        <h1 class="title is-1 has-text-danger">{{ description }}</h1>
+<section class="unique-section hero">
+    <div class="container">
+        <h1 class="error-title">{{ description }}</h1>
         {% if info %}
-        <h2 class="subtitle is-2 has-text-warning mt-6">
-            {{ info }}
-        </h2>
+        <h2 class="error-subtitle">{{ info }}</h2>
         {% endif %}
-        <a class="button has-background-success-55 is-responsive is-large is-size-5-mobile mt-5" href={{ index }}>
-            {{ goto_message }}
-        </a>
+        <a class="button button-primary button-medium-large" href="{{ index }}">{{ goto_message }}</a>
     </div>
 </section>
 {% endblock %}

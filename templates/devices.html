@@ -1,60 +1,122 @@
-<section class="is-fullheight text-centered">
+{% macro route_define(device_id, name, route) %}
+
+<div class="pill-button pill-primary-border">
+    <form action="/request" method="post">
+        <input type="hidden" name="device_id" value="{{ device_id }}">
+        <input type="hidden" name="route" value="{{ name }}">
+        <button class="pill-text pill-primary" type="submit">
+            <span>{{ route.metadata.name }}</span>
+        </button>
+    </form>
+    <span class="pill-divider"></span>
+    <span class="pill-icon open-request-modal-{{ device_id }}" data-id="{{ route.data.id }}">
+        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 17V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="1" cy="1" r="1" transform="matrix(1 0 0 -1 11 9)" fill="currentColor"/>
+        </svg>
+    </span>
+</div>
+{% endmacro %}
+
+{% macro route_modal(device, route) %}
+<div class="modal-overlay" id="request-modal-{{device.id}}{{route.data.id}}">
+    <div class="modal">
+        <div class="content">
+            <h2>{{ device.route_title_description }}</h2>
+            <p>{{ route.metadata.description }}</p>
+            {% if route.data.hazards | length > 0 %}
+                <h2>{{ device.hazard_title_description }}</h2>
+                <div class="pill-container">
+                    {% for hazard in route.data.hazards %}
+                    {%- set category = hazard.category_name | lower -%}
+                    <div class="pill-button hazard-{{ category }}-border">
+                        <button class="pill-text hazard-{{ category }} {% if hazard.is_disabled %}button-disabled {%- endif -%}hazard-toggle">
+                            <span>{{ hazard.name }}</span>
+                        </button>
+                        <span class="pill-divider"></span>
+                        <span class="pill-icon hazard-info" data-name="{{ hazard.name}}" data-description="{{ hazard.description }}" data-border="info-box-{{ category }}">
+                            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M12 17V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="1" cy="1" r="1" transform="matrix(1 0 0 -1 11 9)" fill="currentColor"/>
+                            </svg>
+                        </span>
+                    </div>
+                    {% endfor %}
+                    <div class="info-box" data-id="0">
+                        <h3></h3>
+                        <p></p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+<section class="device-section">
     <div class="container">
         <div class="cards-grid">
             {% for device in devices %}
             <div id="card-{{ device.id }}" class="card">
-                <img id="light-icon-{{ device.id }}" src="/assets/svg/light-off.svg" class="card-icon">
-                <h3>{{ device.modes }}</h3>
-                <div class="modes">
-                    {% set manual_selected = "" %}
-                    {% set motion_detection_selected = "" %}
-                    {% set ambient_light_selected = "" %}
-                    {% if device.mode == "Manual" %}
-                        {% set manual_selected = " selected" %}
-                    {% elif device.mode == "MotionDetection" %}
-                        {% set motion_detection_selected = " selected" %}
-                    {% else %}
-                        {% set ambient_light_selected = " selected" %}
-                    {% endif %}
-                    <form action="/request" method="post">
-                        <input type="hidden" name="device_id" value="{{ device.id }}">
-                        <input type="hidden" name="device_state" value="{{ device.manual_mode }}">
-                        <input type="hidden" name="route" value="{{ device.manual_route }}">
-                        <button class="mode{{ manual_selected }}" type="submit">{{ device.manual }}</button>
-                    </form>
-                    <form action="/request" method="post">
-                        <input type="hidden" name="device_id" value="{{ device.id }}">
-                        <input type="hidden" name="device_state" value="{{ device.motion_detection_mode }}">
-                        <input type="hidden" name="route" value="{{ device.motion_detection_route }}">
-                        <button class="mode{{ motion_detection_selected }}" type="submit">{{ device.motion_detection }}</button>
-                    </form>
-                    <form action="/request" method="post">
-                        <input type="hidden" name="device_id" value="{{ device.id }}">
-                        <input type="hidden" name="device_state" value="{{ device.ambient_light_mode }}">
-                        <input type="hidden" name="route" value="{{ device.ambient_light_route }}">
-                        <button class="mode{{ ambient_light_selected }}" type="submit">{{ device.ambient_light }}</button>
-                    </form>
+                <div class="card-header">
+                    <button class="info-button open-device-modal" aria-label="Info">
+                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M12 17V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <circle cx="1" cy="1" r="1" transform="matrix(1 0 0 -1 11 9)" fill="currentColor"/>
+                        </svg>
+                    </button>
                 </div>
-                <h3>{{ device.commands }}</h3>
-                <div class="button-container">
-                    <form action="/request" method="post">
-                        <input type="hidden" name="device_id" value="{{ device.id }}">
-                        <input type="hidden" name="route" value="{{ device.on_route }}">
-                        <button class="button button-primary" type="submit">{{ device.on }}</button>
-                    </form>
-                    <form action="/request" method="post">
-                        <input type="hidden" name="device_id" value="{{ device.id }}">
-                        <input type="hidden" name="route" value="{{ device.off_route }}">
-                        <button class="button button-primary" type="submit">{{ device.off }}</button>
-                    </form>
-                    <form action="/request" method="post">
-                        <input type="hidden" name="device_id" value="{{ device.id }}">
-                        <input type="hidden" name="route" value="{{ device.toggle_route }}">
-                        <button class="button button-primary" type="submit">{{ device.toggle }}</button>
-                    </form>
+                <div class="card-content">
+                    <div class="icons">
+                        <img id="light-icon-{{ device.id }}" src="/assets/svg/light-off.svg" class="light-icon">
+                        <div id="temperature-{{ device.id }}" class="temperature">
+                            <img src="/assets/svg/thermometer.svg" class="temperature-icon">
+                            <p>26°C</p>
+                        </div>
+                    </div>
+                    <h3>{{ device.modes }}</h3>
+                    <div class="modes">
+                        {% set manual_selected = "" %}
+                        {% set motion_detection_selected = "" %}
+                        {% set ambient_light_selected = "" %}
+                        {% if device.mode == "Manual" %}
+                            {% set manual_selected = " selected" %}
+                        {% elif device.mode == "MotionDetection" %}
+                            {% set motion_detection_selected = " selected" %}
+                        {% else %}
+                            {% set ambient_light_selected = " selected" %}
+                        {% endif %}
+                        <form action="/request" method="post">
+                            <input type="hidden" name="device_id" value="{{ device.id }}">
+                            <input type="hidden" name="device_state" value="{{ device.state_routes.manual_mode }}">
+                            <input type="hidden" name="route" value="{{ device.state_routes.manual_route }}">
+                            <button class="mode{{ manual_selected }}" type="submit">{{ device.state_routes.manual }}</button>
+                        </form>
+                        <form action="/request" method="post">
+                            <input type="hidden" name="device_id" value="{{ device.id }}">
+                            <input type="hidden" name="device_state" value="{{ device.state_routes.motion_detection_mode }}">
+                            <input type="hidden" name="route" value="{{ device.state_routes.motion_detection_route }}">
+                            <button class="mode{{ motion_detection_selected }}" type="submit">{{ device.state_routes.motion_detection }}</button>
+                        </form>
+                        <form action="/request" method="post">
+                            <input type="hidden" name="device_id" value="{{ device.id }}">
+                            <input type="hidden" name="device_state" value="{{ device.state_routes.ambient_light_mode }}">
+                            <input type="hidden" name="route" value="{{ device.state_routes.ambient_light_route }}">
+                            <button class="mode{{ ambient_light_selected }}" type="submit">{{ device.state_routes.ambient_light }}</button>
+                        </form>
+                    </div>
+                    <h3>{{ device.commands }}</h3>
+                    <div class="button-container">
+                        {{ route_define(device.id, "/on", device.routes["/on"]) }}
+                        {{ route_define(device.id, "/off", device.routes["/off"]) }}
+                        {{ route_define(device.id, "/toggle", device.routes["/toggle"]) }}
+                    </div>
                 </div>
             </div>
-           {% endfor %}
+            {% endfor %}
         </div>
         <form action="{{ discovery_route }}" method="post">
             <button id="discovery" class="button button-info button-medium" type="submit">{{ discovery_button }}</button>
@@ -62,7 +124,23 @@
     </div>
 </section>
 
-<script type="text/javascript">
+{% for device in devices %}
+<div class="modal-overlay" id="device-modal-{{ device.id }}">
+    <div class="modal">
+        <div class="content">
+            <h2>{{ device.title_description }}</h2>
+            <p>{{ device.description }}</p>
+        </div>
+    </div>
+</div>
+
+{{ route_modal(device, device.routes["/on"]) }}
+{{ route_modal(device, device.routes["/off"]) }}
+{{ route_modal(device, device.routes["/toggle"]) }}
+
+{% endfor %}
+
+<script type="module">
 
 {% for device in devices %}
     {% if device.has_events %}
@@ -161,5 +239,98 @@ window.addEventListener("beforeunload", () => {
             }
         {% endif %}
     {% endfor %}
+});
+
+/* === Modals === */
+function openModal(modal) {
+    modal.style.display = 'flex';
+    // Prevent background scrolling
+    document.body.classList.add('modal-open');
+}
+
+function closeModal(modal) {
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+
+const openDevicesModal = document.querySelectorAll('.open-device-modal');
+openDevicesModal.forEach((openDeviceModal, deviceIndex) => {
+    const deviceModal = document.getElementById(`device-modal-${deviceIndex}`);
+
+    openDeviceModal.addEventListener('click', () => {
+        openModal(deviceModal);
+    });
+
+    deviceModal.addEventListener('click', (e) => {
+        if (e.target === deviceModal) {
+            closeModal(deviceModal);
+        }
+    });
+
+    const openRequestsModal = document.querySelectorAll(`.open-request-modal-${deviceIndex}`);
+
+    openRequestsModal.forEach(openRequestModal => {
+        const id = openRequestModal.dataset.id;
+        const requestModal = document.getElementById(`request-modal-${deviceIndex}${id}`);
+
+        openRequestModal.addEventListener('click', () => {
+            openModal(requestModal);
+        });
+
+        requestModal.addEventListener('click', (e) => {
+            if (e.target === requestModal) {
+                const hazardBox = requestModal.querySelector('.info-box');
+                if (hazardBox) {
+                    hazardBox.classList.remove('show');
+                }
+                closeModal(requestModal);
+            }
+        });
+    });
+});
+
+/* === Hazards === */
+const hazardsToggle = document.querySelectorAll('.hazard-toggle');
+hazardsToggle.forEach(hazardToggle => {
+    hazardToggle.addEventListener('click', () => {
+        // TODO: Add the eventSource to tell the webapp that the hazard is disabled.
+        hazardToggle.classList.toggle('button-disabled');
+    });
+});
+
+const hazardsInfo = document.querySelectorAll(".hazard-info");
+hazardsInfo.forEach((hazardInfo, hazardInfoIndex) => {
+    hazardInfo.addEventListener("click", () => {
+        const id = String(hazardInfoIndex);
+
+        const name = hazardInfo.dataset.name;
+        const description = hazardInfo.dataset.description;
+        const borderColor = hazardInfo.dataset.border;
+
+        const hazardBox = hazardInfo.parentElement.parentElement.querySelector('.info-box');
+        const isVisible = hazardBox.classList.contains('show');
+
+        const h3 = hazardBox.querySelector('h3');
+        const p = hazardBox.querySelector('p');
+
+        h3.textContent = name;
+        p.textContent = description;
+
+        // Remove any existing border color classes
+        hazardBox.classList.forEach(cls => {
+            if (cls !== 'info-box' && cls !== 'show') {
+                hazardBox.classList.remove(cls);
+            }
+        });
+
+        // Toggle visibility and current border class
+        if (isVisible && hazardBox.dataset.id === id) {
+            hazardBox.classList.remove('show');
+        } else {
+            hazardBox.classList.add('show');
+            hazardBox.classList.add(borderColor);
+            hazardBox.dataset.id = id;
+        }
+    });
 });
 </script>
