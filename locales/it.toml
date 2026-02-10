@@ -63,6 +63,10 @@ request_error = "Errore nella richiesta"
 web_app_address_message = "Accedi all'applicazione da questo indirizzo"
 startup_message = "Avvio applicazione..."
 
+events_nonexistent_device = "Eventi: Il dispositivo `%{device_id}` non esiste"
+events_failed_reception = "Errore nella ricezione degli eventi: %{e}"
+events_failed_serialization = "Errore nel serializzare gli eventi come stringhe: %{e}"
+
 [privacy_hazards_card]
 title = "Categorie di Rischi"
 description_title = "Modalità d'uso"

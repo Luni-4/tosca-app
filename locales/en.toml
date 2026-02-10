@@ -62,6 +62,10 @@ assets_service = "Assets service"
 web_app_address_message = "Web controller reachable at this address"
 startup_message = "Starting web app..."
 
+events_nonexistent_device = "Events: Device `%{device_id}` does not exist"
+events_failed_reception = "Failed to receive events: %{e}"
+events_failed_serialization = "Failed to serialize the events as string: %{e}"
+
 [privacy_hazards_card]
 title = "Hazard Categories"
 description_title = "Usage modes"

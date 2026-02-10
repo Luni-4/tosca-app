@@ -44,7 +44,10 @@ pub(crate) async fn event_stream(
         receiver.resubscribe()
     } else {
         #[cfg(feature = "logging")]
-        tracing::error!("Events: {}", format!("Device `{device_id}` does not exist"));
+        tracing::error!(
+            "{}",
+            t!("logging.events_nonexistent_device", device_id = device_id)
+        );
         // The browser receives no output, the server continues running,
         // and the issue is logged.
         //
@@ -66,7 +69,7 @@ pub(crate) async fn event_stream(
                 Ok(events) => events,
                 Err(e) => {
                     #[cfg(feature = "logging")]
-                    tracing::error!("Failed to receive events: {e}");
+                    tracing::error!("{}", t!("logging.events_failed_reception", e = e));
                     return None;
                 }
             };
@@ -98,7 +101,7 @@ pub(crate) async fn event_stream(
                 Ok(string_data) => string_data,
                 Err(e) => {
                     #[cfg(feature = "logging")]
-                    tracing::error!("Failed to serialize the events as string: {e}");
+                    tracing::error!("{}", t!("logging.events_failed_serialization", e = e));
                     return None;
                 }
             };
