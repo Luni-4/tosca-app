@@ -72,9 +72,9 @@
                 <div class="card-content">
                     <div class="icons">
                         <img id="light-icon-{{ device.id }}" src="/assets/svg/light-off.svg" class="light-icon">
-                        <div id="temperature-{{ device.id }}" class="temperature">
+                        <div class="temperature">
                             <img src="/assets/svg/thermometer.svg" class="temperature-icon">
-                            <p>26°C</p>
+                            <p id="temperature-{{ device.id }}">--°C</p>
                         </div>
                     </div>
                     <h3>{{ device.modes }}</h3>
@@ -188,30 +188,33 @@ document.addEventListener("DOMContentLoaded", () => {
             const card = document.getElementById("card-{{ device.id }}");
 
             if (card) {
-                // THE JS CODE OF EACH CARD
-                const iconLight = document.getElementById("light-icon-{{ device.id }}");
+                // Start listening to the events
+                eventSource{{ device.id }} = new EventSource("/events/{{ device.id }}");
 
-                if (iconLight) {
-                    // Start listening to the events
-                    eventSource{{ device.id }} = new EventSource("/events/{{ device.id }}");
+                eventSource{{ device.id }}.onmessage = function(event) {
+                    // Parse the JSON data
+                    const eventsData = JSON.parse(event.data);
 
-                    eventSource{{ device.id }}.onmessage = function(event) {
-                        const lightStatusMap = {
-                            "true": "/assets/svg/light-on.svg",
-                            "false": "/assets/svg/light-off.svg"
-                        };
-                        document.getElementById("light-icon-{{ device.id }}").src = lightStatusMap[event.data] || "/assets/svg/light-off.svg";
+                    // Update light icon.
+                    const lightStatusMap = {
+                        "true": "/assets/svg/light-on.svg",
+                        "false": "/assets/svg/light-off.svg"
                     };
+                    document.getElementById("light-icon-{{ device.id }}").src = lightStatusMap[eventsData.is_light_on] || "/assets/svg/light-off.svg";
 
-                    eventSource{{ device.id }}.onerror = function(event) {
-                        console.error("EventSource for device {{ device.id }} failed:", event);
-                        if (eventSource{{ device.id }}) {
-                          eventSource{{ device.id }}.close();
-                          console.log("EventSource closed for device {{ device.id }}.");
-                        }
-                    };
-                }
-                // END THE JS CODE OF EACH CARD
+                    // Update the temperature
+                    const temperature = document.getElementById("temperature-{{ device.id }}");
+                    const temp = eventsData.temperature;
+                    temperature.textContent = (temp === 274) ? "--°C" : `${temp}°C`;
+                };
+
+                eventSource{{ device.id }}.onerror = function(event) {
+                    console.error("EventSource for device {{ device.id }} failed:", JSON.parse(event.data));
+                    if (eventSource{{ device.id }}) {
+                      eventSource{{ device.id }}.close();
+                      console.log("EventSource closed for device {{ device.id }}.");
+                    }
+                };
             }
         {% endif %}
     {% endfor %}

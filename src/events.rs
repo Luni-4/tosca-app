@@ -9,6 +9,8 @@ use axum::{
 
 use futures::stream::Stream;
 
+use serde::Serialize;
+
 use tokio_stream::StreamExt as _;
 use tokio_stream::wrappers::BroadcastStream;
 
@@ -16,6 +18,21 @@ use crate::AppState;
 
 const THROTTLE: Duration = Duration::from_secs(1);
 const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(1);
+
+#[derive(Serialize, Clone, Copy, PartialEq)]
+struct EventData {
+    is_light_on: bool,
+    temperature: f32,
+}
+
+impl EventData {
+    const fn new(is_light_on: bool, temperature: f32) -> Self {
+        Self {
+            is_light_on,
+            temperature,
+        }
+    }
+}
 
 pub(crate) async fn event_stream(
     Path(device_id): Path<usize>,
@@ -54,22 +71,41 @@ pub(crate) async fn event_stream(
                 }
             };
 
-            // FIXME: This logic should be provided by the card layer and
+            // FIXME: The events logic should be provided by the card layer and
             // not hard-coded here.
-            let light_status = events.bool_events_as_slice().iter().any(|e| e.value);
+            let is_light_on = events.bool_events_as_slice().iter().any(|e| e.value);
+            // If no temperature event is found, use an unreachable Celsius
+            // value to indicate an error.
+            let temperature = events
+                .f32_events_as_slice()
+                .iter()
+                .find(|e| e.name == "temperature")
+                .map_or(-274.0, |e| e.value);
+
+            let event_data = EventData::new(is_light_on, temperature);
 
             #[cfg(feature = "logging")]
             tracing::info!("{events}");
 
-            // Skip sending SSE event if the light state hasn’t changed.
-            if previous_state == Some(light_status) {
+            // Skip sending SSE event if the events data has not changed.
+            let new_state = Some(event_data);
+            if previous_state == new_state {
                 return None;
             }
-            previous_state = Some(light_status);
+            previous_state = new_state;
+
+            let string_data = match serde_json::to_string(&event_data) {
+                Ok(string_data) => string_data,
+                Err(e) => {
+                    #[cfg(feature = "logging")]
+                    tracing::error!("Failed to serialize the events as string: {e}");
+                    return None;
+                }
+            };
 
             Some(Ok(Event::default()
                 .id(device_id.to_string())
-                .data(light_status.to_string())))
+                .data(string_data)))
         })
         .throttle(THROTTLE);
 
