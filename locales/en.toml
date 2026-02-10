@@ -53,6 +53,12 @@ file_error = "Creation of log error failed"
 debug_file_error = "Creation of log debug failed"
 subscriber_error = "Subscriber initialization failed"
 request_error = "Request error"
+
+home_page = "Home page"
+privacy_page = "Privacy page"
+discovery_route = "Discovery route"
+request_route = "Request route"
+assets_service = "Assets service"
 web_app_address_message = "Web controller reachable at this address"
 startup_message = "Starting web app..."
 

@@ -224,15 +224,15 @@ async fn main() {
     #[cfg(feature = "logging")]
     {
         // Navbar route.
-        tracing::info!(r#"Home: [GET, "/"]"#);
-        tracing::info!(r#"Privacy: [GET, "/privacy"]"#);
+        tracing::info!(r#"{}: [GET, "/"]"#, t!("logging.home_page"));
+        tracing::info!(r#"{}: [GET, "/privacy"]"#, t!("logging.privacy_page"));
 
         // Device controller commands.
-        tracing::info!(r#"Discovery: [POST, "/discovery"]"#);
-        tracing::info!(r#"Send request: [POST, "/request"]"#);
+        tracing::info!(r#"{}: [POST, "/discovery"]"#, t!("logging.discovery_route"));
+        tracing::info!(r#"{}: [POST, "/request"]"#, t!("logging.request_route"));
 
         // Assets service.
-        tracing::info!(r#"Assets: [SERVICE, "/assets"]"#);
+        tracing::info!(r#"{}: [SERVICE, "/assets"]"#, t!("logging.assets_service"));
 
         // Server information.
         tracing::info!("{}: {listener_bind}", t!("logging.web_app_address_message"));
