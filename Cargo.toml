@@ -21,7 +21,6 @@ chrono.default-features = false
 chrono.features = ["clock"]
 
 clap.version = "4.5"
-clap.default-features = false
 clap.features = ["derive", "std"]
 
 futures.version = "0.3.31"
