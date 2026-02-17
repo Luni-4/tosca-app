@@ -74,7 +74,7 @@ struct JsonError<'a> {
     description: &'a str,
     // Information about an error.
     #[serde(skip_serializing_if = "Option::is_none")]
-    info: Option<String>,
+    info: Option<Cow<'static, str>>,
 }
 
 impl<'a> JsonError<'a> {
@@ -85,7 +85,7 @@ impl<'a> JsonError<'a> {
         }
     }
 
-    fn with_description_error(description: &'a str, info: String) -> Self {
+    fn with_description_error(description: &'a str, info: Cow<'static, str>) -> Self {
         Self {
             description,
             info: Some(info),
@@ -102,7 +102,7 @@ enum ErrorState {
 
 pub(crate) struct Error {
     state: ErrorState,
-    data: String,
+    data: Cow<'static, str>,
 }
 
 impl Error {
@@ -132,8 +132,11 @@ impl Error {
         Self::new(ErrorState::Success, rendered)
     }
 
-    fn new(state: ErrorState, data: String) -> Self {
-        Self { state, data }
+    fn new(state: ErrorState, data: impl Into<Cow<'static, str>>) -> Self {
+        Self {
+            state,
+            data: data.into(),
+        }
     }
 }
 
