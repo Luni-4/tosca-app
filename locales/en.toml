@@ -1,4 +1,5 @@
 [startup_errors]
+invalid_language = "Invalid language: %{lang}"
 loading_template = "Built-in template internal failure"
 listener = "Listener creation failed"
 server_startup = "Server startup failed"

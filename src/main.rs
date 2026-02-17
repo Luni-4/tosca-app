@@ -91,13 +91,13 @@ enum Language {
 }
 
 impl FromStr for Language {
-    type Err = String;
+    type Err = Cow<'static, str>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "en" => Ok(Self::English),
             "it" => Ok(Self::Italian),
-            _ => Err(format!("Invalid mode: `{s}`")),
+            _ => Err(t!("startup_errors.invalid_language", lang = s)),
         }
     }
 }
