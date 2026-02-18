@@ -152,11 +152,20 @@ pub(crate) async fn send_request(
                 &t!("parsing_errors.serial_response"),
             )?;
         }
-        Response::InfoBody(_response) => {}
-        // TODO: How to treat a skip response because of privacy here. Add to
-        // response log.
-        Response::Skipped => todo!("Add skipped response to response log"),
-        Response::StreamBody(_) => todo!("Stream response not implemented"),
+        // TODO: Implement the following three response types and add them to
+        // the response log.
+        Response::InfoBody(_response) => {
+            #[cfg(feature = "logging")]
+            tracing::warn!("An info response is still not implemented.");
+        }
+        Response::StreamBody(_response) => {
+            #[cfg(feature = "logging")]
+            tracing::warn!("A stream response is still not implemented.");
+        }
+        Response::Skipped => {
+            #[cfg(feature = "logging")]
+            tracing::info!("Skipped response for privacy settings.");
+        }
     }
 
     // If a state has been assigned, change the state.
