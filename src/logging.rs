@@ -12,13 +12,13 @@ pub(crate) fn create_subscriber() {
         .create(true)
         .append(true)
         .open(LOG_DEBUG_FILENAME)
-        .expect(&t!("logging.debug_file_error"));
+        .expect("Creation of log debug failed.");
 
     let error_file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(LOG_ERROR_FILENAME)
-        .expect(&t!("logging.file_error"));
+        .expect("Creation of log error failed");
 
     let console_subscriber = fmt::layer()
         .with_writer(std::io::stdout)
@@ -40,5 +40,5 @@ pub(crate) fn create_subscriber() {
         .with(debug_subscriber)
         .with(error_subscriber);
 
-    tracing::subscriber::set_global_default(subscriber).expect(&t!("logging.subscriber_error"));
+    tracing::subscriber::set_global_default(subscriber).expect("Subscriber initialization failed.");
 }

@@ -54,11 +54,13 @@ pub(crate) fn error_with_info<T, E: std::error::Error>(
 pub(crate) async fn missing_assets() -> Error {
     #[cfg(feature = "logging")]
     tracing::error!(
-        "{} ~> {}",
+        "{} ~> Error in loading the `assets` directory",
         t!("logging.request_error"),
-        t!("startup_errors.assets")
     );
-    Error::new(ErrorState::Assets, t!("startup_errors.assets").into())
+    Error::new(
+        ErrorState::Assets,
+        "Error in loading the `assets` directory",
+    )
 }
 
 pub(crate) async fn missing_route(State(state): State<AppState>, uri: Uri) -> Error {

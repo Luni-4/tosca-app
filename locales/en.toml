@@ -1,10 +1,3 @@
-[startup_errors]
-invalid_language = "Invalid language: %{lang}"
-loading_template = "Built-in template internal failure"
-listener = "Listener creation failed"
-server_startup = "Server startup failed"
-assets = "Error in loading the `assets` directory"
-
 [navbar]
 github_description = "ToscaLabs Organization"
 home_name = "Home"
@@ -48,24 +41,6 @@ discovery = "Discover Devices"
 
 [footer]
 rights = "All rights reserved."
-
-[logging]
-file_error = "Creation of log error failed"
-debug_file_error = "Creation of log debug failed"
-subscriber_error = "Subscriber initialization failed"
-request_error = "Request error"
-
-home_page = "Home page"
-privacy_page = "Privacy page"
-discovery_route = "Discovery route"
-request_route = "Request route"
-assets_service = "Assets service"
-web_app_address_message = "Web controller reachable at this address"
-startup_message = "Starting web app..."
-
-events_nonexistent_device = "Events: Device `%{device_id}` does not exist"
-events_failed_reception = "Failed to receive events: %{e}"
-events_failed_serialization = "Failed to serialize the events as string: %{e}"
 
 [privacy_hazards_card]
 title = "Hazard Categories"

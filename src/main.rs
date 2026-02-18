@@ -33,8 +33,6 @@ use clap::Parser;
 
 use minijinja::{Environment, value::Value};
 
-use rust_i18n::t;
-
 use tokio::sync::Mutex;
 use tokio::sync::broadcast::Receiver;
 
@@ -91,13 +89,13 @@ enum Language {
 }
 
 impl FromStr for Language {
-    type Err = Cow<'static, str>;
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "en" => Ok(Self::English),
             "it" => Ok(Self::Italian),
-            _ => Err(t!("startup_errors.invalid_language", lang = s)),
+            _ => Err(format!("Invalid language: {s}")),
         }
     }
 }
@@ -121,7 +119,7 @@ impl Language {
 #[command(
     version,
     about,
-    long_about = "A interactive web app to interact with `tosca` devices."
+    long_about = "A web app to interact with `tosca` devices."
 )]
 struct Cli {
     /// Web app `IPv4` address.
@@ -180,7 +178,7 @@ async fn main() {
 
     for (name, src) in TEMPLATES {
         env.add_template(name, src)
-            .expect(&t!("startup_errors.loading_template"));
+            .expect("Built-in template internal failure.");
     }
 
     // Add global functions to minijinja environment.
@@ -218,31 +216,31 @@ async fn main() {
     // Creates listener.
     let listener = tokio::net::TcpListener::bind(&listener_bind)
         .await
-        .expect(&t!("startup_errors.listener"));
+        .expect("Listener creation failed.");
 
     // Prints listener bind and controller startup message.
     #[cfg(feature = "logging")]
     {
         // Navbar route.
-        tracing::info!(r#"{}: [GET, "/"]"#, t!("logging.home_page"));
-        tracing::info!(r#"{}: [GET, "/privacy"]"#, t!("logging.privacy_page"));
+        tracing::info!(r#"Home Page: [GET, "/"]"#);
+        tracing::info!(r#"Privacy Page: [GET, "/privacy"]"#);
 
         // Device controller commands.
-        tracing::info!(r#"{}: [POST, "/discovery"]"#, t!("logging.discovery_route"));
-        tracing::info!(r#"{}: [POST, "/request"]"#, t!("logging.request_route"));
+        tracing::info!(r#"Discovery Route: [POST, "/discovery"]"#);
+        tracing::info!(r#"Request Route: [POST, "/request"]"#);
 
         // Assets service.
-        tracing::info!(r#"{}: [SERVICE, "/assets"]"#, t!("logging.assets_service"));
+        tracing::info!(r#"Assets Service: [SERVICE, "/assets"]"#);
 
         // Server information.
-        tracing::info!("{}: {listener_bind}", t!("logging.web_app_address_message"));
-        tracing::info!("{}", t!("logging.startup_message"));
+        tracing::info!("Tosca app reachable at this address: {listener_bind}");
+        tracing::info!("Starting tosca app...");
     }
 
     // Runs server.
     axum::serve(listener, app)
         .await
-        .expect(&t!("startup_errors.server_startup"));
+        .expect("Server startup failed.");
 
     if let Some(controller) = Arc::into_inner(controller_clone) {
         controller.into_inner().shutdown().await;
