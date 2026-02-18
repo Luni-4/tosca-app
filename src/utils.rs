@@ -22,16 +22,6 @@ pub(crate) fn create_controller() -> Controller {
     Controller::new(discovery)
 }
 
-/*pub(crate) const fn retrieve_all_hazards() -> [HazardData; 24] {
-    let mut a: [HazardData; ALL_HAZARDS.len()] = [Hazard::FireHazard.data(); ALL_HAZARDS.len()];
-    let mut i = 0;
-    while i < ALL_HAZARDS.len() {
-        a[i] = ALL_HAZARDS[i].data();
-        i += 1;
-    }
-    a
-}*/
-
 pub(crate) fn add_functions_to_env(env: &mut Environment<'_>) {
     env.add_function("hazard_id", |hazard: ViaDeserialize<Hazard>| {
         hazard.data().id
