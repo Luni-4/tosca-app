@@ -204,8 +204,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Update the temperature
                     const temperature = document.getElementById("temperature-{{ device.id }}");
-                    const temp = eventsData.temperature;
-                    temperature.textContent = (temp === 274) ? "--°C" : `${temp}°C`;
+                    const tempValue = eventsData.temperature;
+                    temperature.textContent =
+                      typeof tempValue === "number" && tempValue !== 274
+                        ? `${tempValue.toFixed(1)}°C`
+                        : "--°C";
                 };
 
                 eventSource{{ device.id }}.onerror = function(event) {
