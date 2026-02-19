@@ -33,7 +33,7 @@ send_request_with_params = "Error in sending the request with input parameters"
 
 [labels]
 go_to_devices = "Go to devices"
-no_devices = "No devices found."
+no_devices = "No devices found"
 missing_route = "No route for"
 
 [buttons]

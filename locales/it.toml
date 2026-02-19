@@ -33,7 +33,7 @@ send_request_with_params = "Errore nell'invio della richiesta con parametri"
 
 [labels]
 go_to_devices = "Torna ai dispositivi"
-no_devices = "Nessun dispositivo trovato."
+no_devices = "Nessun dispositivo trovato"
 missing_route = "Non esiste un percorso chiamato"
 
 [buttons]
