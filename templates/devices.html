@@ -196,11 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     const eventsData = JSON.parse(event.data);
 
                     // Update light icon.
-                    const lightStatusMap = {
-                        "true": "/assets/svg/light-on.svg",
-                        "false": "/assets/svg/light-off.svg"
-                    };
-                    document.getElementById("light-icon-{{ device.id }}").src = lightStatusMap[eventsData.is_light_on] || "/assets/svg/light-off.svg";
+                    const lightIcon = document.getElementById("light-icon-{{ device.id }}");
+
+                    lightIcon.src = eventsData.is_light_on === true
+                      ? "/assets/svg/light-on.svg"
+                      : "/assets/svg/light-off.svg";
 
                     // Update the temperature
                     const temperature = document.getElementById("temperature-{{ device.id }}");
