@@ -23,7 +23,7 @@ chrono.features = ["clock"]
 clap.version = "4.5"
 clap.features = ["derive", "std"]
 
-futures.version = "0.3.31"
+futures.version = "0.3.32"
 futures.default-features = false
 
 minijinja.version = "2.15"
