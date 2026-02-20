@@ -191,33 +191,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Start listening to the events
                 eventSource{{ device.id }} = new EventSource("/events/{{ device.id }}");
 
-                eventSource{{ device.id }}.onmessage = function(event) {
-                    // Parse the JSON data
-                    const eventsData = JSON.parse(event.data);
+                if (eventSource{{ device.id }}) {
+                    eventSource{{ device.id }}.onmessage = function(event) {
+                        // Parse the JSON data
+                        const eventsData = JSON.parse(event.data);
 
-                    // Update light icon.
-                    const lightIcon = document.getElementById("light-icon-{{ device.id }}");
+                        // Update light icon.
+                        const lightIcon = document.getElementById("light-icon-{{ device.id }}");
 
-                    lightIcon.src = eventsData.is_light_on === true
-                      ? "/assets/svg/light-on.svg"
-                      : "/assets/svg/light-off.svg";
+                        lightIcon.src = eventsData.is_light_on === true
+                          ? "/assets/svg/light-on.svg"
+                          : "/assets/svg/light-off.svg";
 
-                    // Update the temperature
-                    const temperature = document.getElementById("temperature-{{ device.id }}");
-                    const tempValue = eventsData.temperature;
-                    temperature.textContent =
-                      typeof tempValue === "number" && tempValue !== 274
-                        ? `${tempValue.toFixed(1)}°C`
-                        : "--°C";
-                };
+                        // Update the temperature
+                        const temperature = document.getElementById("temperature-{{ device.id }}");
+                        const tempValue = eventsData.temperature;
+                        temperature.textContent =
+                          typeof tempValue === "number" && tempValue !== 274
+                            ? `${tempValue.toFixed(1)}°C`
+                            : "--°C";
+                    };
 
-                eventSource{{ device.id }}.onerror = function(event) {
-                    console.error("EventSource for device {{ device.id }} failed:", JSON.parse(event.data));
-                    if (eventSource{{ device.id }}) {
-                      eventSource{{ device.id }}.close();
-                      console.log("EventSource closed for device {{ device.id }}.");
-                    }
-                };
+                    eventSource{{ device.id }}.onerror = function(event) {
+                        console.error("EventSource for device {{ device.id }} failed:");
+                        if (eventSource{{ device.id }}) {
+                          eventSource{{ device.id }}.close();
+                          console.log("EventSource closed for device {{ device.id }}.");
+                        }
+                    };
+                }
             }
         {% endif %}
     {% endfor %}
