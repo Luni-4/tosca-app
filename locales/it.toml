@@ -31,10 +31,17 @@ request_creation = "Errore nel creare la richiesta per il dispositivo"
 send_request_with_default_params = "Errore nell'invio della richiesta con parametri di default"
 send_request_with_params = "Errore nell'invio della richiesta con parametri"
 
+[error]
+request_error = "Errore nella richiesta  ~> %{error}"
+assets_error = "Errore nel caricare la cartella `assets"
+title = "Errore %{status}"
+missing_route = "`%{route}` non esiste"
+report_message = "Invia l'errore a %{email}"
+copy_button_alt = "Copia l'errore"
+goto_home = "Torna alla Home"
+
 [labels]
-go_to_devices = "Torna ai dispositivi"
 no_devices = "Nessun dispositivo trovato"
-missing_route = "Non esiste un percorso chiamato"
 
 [buttons]
 discovery = "Ricerca Dispositivi"

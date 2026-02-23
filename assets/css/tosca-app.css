@@ -37,8 +37,11 @@
   /*
   /*
   /* Error */
-  --error-danger-text-color: rgb(210, 82, 68);
-  --error-warning-text-color: rgb(235, 190, 80);
+  --error-danger-text-color: rgb(220, 60, 50);
+  --error-subtitle-text-color: rgb(120, 110, 105);
+  --error-box-background-color: rgb(255, 245, 240);
+  --error-box-border-color: rgb(217, 125, 95);
+  --error-box-text-color: rgb(112, 28, 18);
   /*
   /*
   /* Buttons */
@@ -186,20 +189,99 @@ section {
 
 .error-title {
   margin-bottom: 2rem;
-  font-size: 4rem;
+  font-size: 6rem;
   font-weight: bold;
-  line-height: 1.3;
+  line-height: 1.5;
   color: var(--error-danger-text-color);
+  opacity: 0.8;
 }
 
 .error-subtitle {
-  margin-bottom: 3rem;
-  font-size: 2rem;
   font-weight: bold;
-  line-height: 1.3;
-  color: var(--error-warning-text-color);
+  line-height: 1;
+  color: var(--error-subtitle-text-color);
 }
 
+.error-500 {
+  margin-bottom: 3rem;
+  font-size: 2rem;
+}
+
+.error-not-500 {
+  margin-bottom: 3.5rem;
+  font-size: 2.5rem;
+}
+
+.error-subtitle a {
+  text-decoration: none;
+  color: var(--link-text-color);
+}
+
+.error-subtitle a:hover {
+  color: var(--link-text-hover-color);
+}
+
+.error-box {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto 2.5rem;
+  padding: 2rem 2rem 1.5rem 2rem;
+  background: var(--error-box-background-color);
+  border: 1px solid var(--error-box-border-color);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--error-box-text-color);
+
+  /* Breaking long words */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.error-text {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-family: monospace;
+}
+
+.error-text p {
+  margin-bottom: 1rem;
+  white-space: pre-line;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+}
+
+.copy-btn .icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn .tick-icon {
+  display: none;
+}
 
 /* Navbar */
 .header {
@@ -865,6 +947,22 @@ body.modal-open {
     font-size: 1.7rem;
   }
 
+  .error-title {
+    font-size: 4rem;
+  }
+
+  .error-500 {
+    font-size: 2.2em;
+  }
+
+  .error-not-500 {
+    font-size: 2.2rem;
+  }
+
+  .error-box {
+    max-width: 400px;
+  }
+
   .button-large {
     padding: 8px 20px;
     font-size: 1.6rem;
@@ -885,6 +983,22 @@ body.modal-open {
     font-size: 1.6rem;
   }
 
+  .error-title {
+    font-size: 4rem;
+  }
+
+  .error-500 {
+    font-size: 2em;
+  }
+
+  .error-not-500 {
+    font-size: 2rem;
+  }
+
+  .error-box {
+    max-width: 300px;
+  }
+
   .card {
     max-width: 320px;
   }
@@ -897,6 +1011,22 @@ body.modal-open {
 @media screen and (max-width: 320px) {
   .container {
     padding: 0 10px;
+  }
+
+  .error-title {
+    font-size: 3.5rem;
+  }
+
+  .error-500 {
+    font-size: 1.8em;
+  }
+
+  .error-not-500 {
+    font-size: 1.8rem;
+  }
+
+  .error-box {
+    max-width: 280px;
   }
 
   .button-large {

@@ -31,10 +31,17 @@ request_creation = "Error in creating the request for the device"
 send_request_with_default_params = "Error in sending the request with default parameters"
 send_request_with_params = "Error in sending the request with input parameters"
 
+[error]
+request_error = "Request error  ~> %{error}"
+assets_error = "Error in loading the `assets` directory"
+title = "Error %{status}"
+missing_route = "`%{route}` does not exist"
+report_message = "Report this error to %{email}"
+copy_button_alt = "Copy error"
+goto_home = "Go to Home"
+
 [labels]
-go_to_devices = "Go to devices"
 no_devices = "No devices found"
-missing_route = "No route for"
 
 [buttons]
 discovery = "Discover Devices"

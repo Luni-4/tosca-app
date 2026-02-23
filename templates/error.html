@@ -1,12 +1,65 @@
 {% extends "layout" %}
 {% block page %}
+
+{% if error_status == 500 %}
+  {% set error_class = "500" %}
+{% else %}
+  {% set error_class = "not-500" %}
+{% endif %}
+
 <section class="unique-section hero">
     <div class="container">
-        <h1 class="error-title">{{ description }}</h1>
-        {% if info %}
-        <h2 class="error-subtitle">{{ info }}</h2>
+        <h1 class="error-title">{{ title }}</h1>
+        <h2 class="error-subtitle error-{{ error_class }}">{% if error_status == 500 %} {{ email }} {% else %} {{ description }} {% endif %}</h2>
+        {% if error_status == 500 %}
+        <div class="error-box">
+            <button class="copy-btn" title="{{ copy_button_alt }}">
+                <div class="icon copy-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                        <rect x="2" y="2" width="13" height="13" rx="2"></rect>
+                    </svg>
+                </div>
+                <div class="icon tick-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                </div>
+            </button>
+            <div class="error-text">
+                <p>{{ description }}</p>
+                <p>{{ info }}</p>
+            </div>
+        </div>
         {% endif %}
+        {% if error_status != 500 %}
         <a class="button button-primary button-medium-large" href="{{ index }}">{{ goto_message }}</a>
+        {% endif %}
     </div>
 </section>
+
+{% if error_status == 500 %}
+<script type="module">
+  const copyBtn = document.querySelector(".copy-btn");
+  const copyIcon = copyBtn.querySelector(".copy-icon");
+  const tickIcon = copyBtn.querySelector(".tick-icon");
+
+  const errorText = document.querySelector(".error-text");
+
+  copyBtn.addEventListener("click", () => {
+    // Copy the error text
+    navigator.clipboard.writeText(errorText.innerText);
+
+    // Toggle icons
+    copyIcon.style.display = "none";
+    tickIcon.style.display = "flex";
+
+    // Revert after 1.5 seconds
+    setTimeout(() => {
+      tickIcon.style.display = "none";
+      copyIcon.style.display = "flex";
+    }, 1500);
+  });
+</script>
+{% endif %}
 {% endblock %}
