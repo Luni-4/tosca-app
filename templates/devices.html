@@ -185,31 +185,48 @@ document.addEventListener("DOMContentLoaded", () => {
     {% for device in devices %}
         {% if device.has_events %}
 
+            function updateDeviceState(events) {
+                // Parse the JSON data
+                const eventsData = JSON.parse(events);
+
+                // Update light icon.
+                const lightIcon = document.getElementById("light-icon-{{ device.id }}");
+                lightIcon.src = eventsData.is_light_on === true
+                    ? "/assets/svg/light-on.svg"
+                    : "/assets/svg/light-off.svg";
+
+                // Update the temperature.
+                const temperature = document.getElementById("temperature-{{ device.id }}");
+                const tempValue = eventsData.temperature;
+                temperature.textContent =
+                typeof tempValue === "number" && tempValue !== 274
+                ? `${tempValue.toFixed(1)}°C`
+                : "--°C";
+            }
+
             const card = document.getElementById("card-{{ device.id }}");
 
             if (card) {
+                // Retrieve the last events
+                let lastEvents = localStorage.getItem('lastEvents') || null;
+
+                // Show the last events and update the state
+                if (lastEvents !== null) {
+                    console.log('Last events:', lastEvents);
+                    // Update device state
+                    updateDeviceState(lastEvents);
+                }
+
                 // Start listening to the events
                 eventSource{{ device.id }} = new EventSource("/events/{{ device.id }}");
 
                 if (eventSource{{ device.id }}) {
                     eventSource{{ device.id }}.onmessage = function(event) {
-                        // Parse the JSON data
-                        const eventsData = JSON.parse(event.data);
+                        // Store the events in local storage
+                        localStorage.setItem('lastEvents', event.data);
 
-                        // Update light icon.
-                        const lightIcon = document.getElementById("light-icon-{{ device.id }}");
-
-                        lightIcon.src = eventsData.is_light_on === true
-                          ? "/assets/svg/light-on.svg"
-                          : "/assets/svg/light-off.svg";
-
-                        // Update the temperature
-                        const temperature = document.getElementById("temperature-{{ device.id }}");
-                        const tempValue = eventsData.temperature;
-                        temperature.textContent =
-                          typeof tempValue === "number" && tempValue !== 274
-                            ? `${tempValue.toFixed(1)}°C`
-                            : "--°C";
+                        // Update device state
+                        updateDeviceState(event.data);
                     };
 
                     eventSource{{ device.id }}.onerror = function(event) {
