@@ -78,7 +78,9 @@ static TEMPLATES: &[(&str, &str)] = &builtin_templates![
     // Privacy page.
     ("privacy", "privacy.html"),
     // Error page.
-    ("error", "error.html")
+    ("error", "error.html"),
+    // Widgets.
+    ("spinner", "widgets/spinner.html")
 ];
 
 #[derive(Clone, Copy, Default)]

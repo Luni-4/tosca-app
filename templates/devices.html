@@ -1,3 +1,5 @@
+{% from "spinner" import spinner, spinner_js %}
+
 {% macro route_define(device_id, name, route) %}
 
 <div class="pill-button pill-primary-border">
@@ -118,11 +120,13 @@
             </div>
             {% endfor %}
         </div>
-        <form action="{{ discovery_route }}" method="post">
+        <form id="spinner" action="{{ discovery_route }}" method="post">
             <button id="discovery" class="button button-info button-medium" type="submit">{{ discovery_button }}</button>
         </form>
     </div>
 </section>
+
+{{ spinner(spinner_text) }}
 
 {% for device in devices %}
 <div class="modal-overlay" id="device-modal-{{ device.id }}">
@@ -139,6 +143,8 @@
 {{ route_modal(device, device.routes["/toggle"]) }}
 
 {% endfor %}
+
+{{ spinner_js() }}
 
 <script type="module">
 

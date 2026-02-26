@@ -42,6 +42,7 @@ goto_home = "Go to Home"
 
 [labels]
 no_devices = "No devices found"
+spinner_text = "Discovering devices..."
 
 [buttons]
 discovery = "Discover Devices"

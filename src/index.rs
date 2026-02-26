@@ -13,6 +13,7 @@ use crate::layout::INDEX_LINK;
 #[derive(Serialize)]
 struct RenderMessages {
     no_devices_message: Cow<'static, str>,
+    spinner_text: Cow<'static, str>,
 }
 
 impl RenderMessages {
@@ -20,6 +21,7 @@ impl RenderMessages {
     fn new() -> Self {
         Self {
             no_devices_message: t!("labels.no_devices"),
+            spinner_text: t!("labels.spinner_text"),
         }
     }
 }

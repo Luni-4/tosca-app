@@ -1,3 +1,5 @@
+{% from "spinner" import spinner, spinner_js %}
+
 {% extends "layout" %}
 
 {% block page %}
@@ -6,11 +8,15 @@
     <section class="unique-section hero">
         <div class="container">
             <h1 class="hero-title">{{ no_devices_message }}</h1>
-            <form action="{{ discovery_route }}" method="post">
+            <form id="spinner" action="{{ discovery_route }}" method="post">
                 <button id="discovery" class="button button-info button-large" type="submit">{{ discovery_button }}</button>
             </form>
         </div>
     </section>
+
+    {{ spinner(spinner_text) }}
+
+{{ spinner_js() }}
 {% else %}
     {% include "devices" %}
 {% endif %}

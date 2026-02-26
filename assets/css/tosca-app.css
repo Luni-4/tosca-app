@@ -89,6 +89,12 @@
   --menu-border-color: rgb(229, 229, 229);
   /*
   /*
+  /* Spinner */
+  --spinner-overlay-background-color: rgba(255, 255, 255, 0.93);
+  --spinner-border-color: rgb(204, 204, 204);
+  --spinner-border-top-color: rgb(0, 123, 255);
+  /*
+  /*
   /* Card */
   --card-background-color: rgb(253, 253, 253);
   --card-border-color: rgb(227, 223, 231);
@@ -603,6 +609,36 @@ section {
 
 .info-box.show {
   display: block;
+}
+
+/* Spinner */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--spinner-overlay-background-color);
+  z-index: 9999;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid var(--spinner-border-color);
+  border-top: 6px solid var(--spinner-border-top-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 1.2rem;
+  font-size: 1.2rem;
 }
 
 /* Cards */

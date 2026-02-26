@@ -42,6 +42,7 @@ goto_home = "Torna alla Home"
 
 [labels]
 no_devices = "Nessun dispositivo trovato"
+spinner_text = "Ricerca dispositivi..."
 
 [buttons]
 discovery = "Ricerca Dispositivi"

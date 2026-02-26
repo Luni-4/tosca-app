@@ -1,0 +1,22 @@
+{% macro spinner(text) %}
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">{{ text }}</div>
+</div>
+{% endmacro %}
+
+{% macro spinner_js() %}
+
+<script type="module">
+    const overlay = document.getElementById("loadingOverlay");
+    const form = document.getElementById("spinner");
+
+    if (overlay && form) {
+        form.addEventListener("submit", () => {
+            // Show spinner immediately
+            overlay.style.display = "flex";
+        });
+    }
+</script>
+
+{% endmacro %}
