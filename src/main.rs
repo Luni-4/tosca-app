@@ -10,6 +10,7 @@ mod layout;
 #[cfg(feature = "logging")]
 mod logging;
 mod privacy;
+mod privacy_policy;
 mod request;
 mod utils;
 
@@ -45,6 +46,7 @@ use crate::events::event_stream;
 use crate::index::index;
 use crate::layout::Layout;
 use crate::privacy::privacy;
+use crate::privacy_policy::{PrivacyPolicyState, toggle_category, toggle_hazard};
 use crate::request::send_request;
 use crate::utils::{add_functions_to_env, create_controller};
 
@@ -146,6 +148,7 @@ struct AppState {
     devices: Arc<Mutex<Devices>>,
     // TODO: Use a std::Mutex because we are dealing with data only.
     devices_receivers: Arc<Mutex<HashMap<usize, Receiver<Events>>>>,
+    policy_state: Arc<Mutex<PrivacyPolicyState>>,
 }
 
 impl AppState {
@@ -155,6 +158,7 @@ impl AppState {
             controller: Arc::new(Mutex::new(controller)),
             devices: Arc::new(Mutex::new(Devices::new())),
             devices_receivers: Arc::new(Mutex::new(HashMap::new())),
+            policy_state: Arc::new(Mutex::new(PrivacyPolicyState::default())),
         }
     }
 
@@ -204,6 +208,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(index))
         .route("/privacy", get(privacy))
+        .route("/privacy/category", post(toggle_category))
+        .route("/privacy/hazard", post(toggle_hazard))
         .route("/events/{device_id}", get(event_stream))
         .route("/discovery", post(run_discovery))
         .route("/request", post(send_request))

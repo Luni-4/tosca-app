@@ -532,6 +532,10 @@ section {
   border-color: var(--button-primary-border-hover-color);
 }
 
+.hazard-header {
+  margin-top: 2rem;
+}
+
 .hazard-safety {
   background: var(--button-safety-background-color);
   color: var(--button-safety-text-color);

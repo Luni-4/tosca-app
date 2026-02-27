@@ -4,9 +4,11 @@
    <section class="unique-section">
         <div class="container">
             <div class="cards-grid">
-                <div class="card">
+                {% for category in categories %}
+                {% set category_id = category.id | lower %}
+                <div class="card privacy-card {% if category.is_disabled %}category-blocked{% endif %}">
                     <div class="card-header">
-                        <button class="info-button open-privacy-modal" aria-label="Info">
+                        <button class="info-button open-category-modal" data-modal="{{ loop.index0 }}" aria-label="Info">
                             <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
                                 <path d="M12 17V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -15,27 +17,45 @@
                         </button>
                     </div>
                     <div class="card-content">
-                        <h3>{{ hazards_card.title }}</h3>
+                        <h3>{{ category.name }}</h3>
+                        <button
+                            type="button"
+                            data-category="{{ category.id }}"
+                            class="button button-medium-vertical hazard-{{ category_id }} hazard-{{ category_id }}-border category-button-toggle {% if category.is_disabled %}button-disabled{% endif %}">
+                            {{ category.block_all_label }}
+                        </button>
+                        <div class="hazard-header">
+                            <h3>{{ category.hazards_label }}</h3>
+                        </div>
                         <div class="button-vertical-container">
-                            {% for category in hazards_card.categories %}
-                            {% set category_id = category.id | lower %}
-                            <button class="button button-medium-vertical hazard-{{ category_id }} hazard-{{ category_id }}-border button-toggle">{{ category.name }}</button>
+                            {% for hazard in category.hazards %}
+                            <button
+                                type="button"
+                                data-hazard-id="{{ hazard.id }}"
+                                {% if category.is_disabled %}disabled{% endif %}
+                                class="button button-medium-vertical hazard-{{ category_id }} hazard-{{ category_id }}-border hazard-toggle
+                                {% if hazard.is_disabled %}button-disabled{% endif %}">
+                                {{ hazard.name }}
+                            </button>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
-    <div class="modal-overlay" id="privacy-modal-0">
+    {% for category in categories %}
+    <div class="modal-overlay" id="category-modal-{{ loop.index0 }}">
         <div class="modal">
             <div class="content">
-                <h2>{{ hazards_card.description_title }}</h2>
-                <p>{{  hazards_card.description }}</p>
+                <h2>{{ category.name }}</h2>
+                <p>{{ category.description }}</p>
             </div>
         </div>
     </div>
+    {% endfor %}
 
     <script type="module">
         /* === Modals === */
@@ -50,26 +70,75 @@
             document.body.classList.remove('modal-open');
         }
 
-        const openDevicesModal = document.querySelectorAll('.open-privacy-modal');
-        openDevicesModal.forEach((openDeviceModal, deviceIndex) => {
-            const deviceModal = document.getElementById(`privacy-modal-${deviceIndex}`);
+        const openCategoryModalButtons = document.querySelectorAll('.open-category-modal');
+        openCategoryModalButtons.forEach(button => {
+            const modalId = button.dataset.modal;
+            const modal = document.getElementById(`category-modal-${modalId}`);
 
-            openDeviceModal.addEventListener('click', () => {
-                openModal(deviceModal);
+            button.addEventListener('click', () => openModal(modal));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal(modal);
             });
+        });
 
-            deviceModal.addEventListener('click', (e) => {
-                if (e.target === deviceModal) {
-                    closeModal(deviceModal);
+        // Category button: blocks all hazards of that category
+        const categoryButtons = document.querySelectorAll('.category-button-toggle');
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                button.classList.toggle('button-disabled');
+
+                const blocked = button.classList.contains('button-disabled');
+                const category = button.dataset.category;
+
+                const card = button.closest('.privacy-card');
+                card.classList.toggle('category-blocked', blocked);
+
+                const hazardButtons = card.querySelectorAll('.hazard-toggle');
+                hazardButtons.forEach(hazardButton => {
+                    if (blocked) {
+                        hazardButton.dataset.prevDisabled = hazardButton.classList.contains('button-disabled') ? "true" : "false";
+                        hazardButton.classList.add('button-disabled');
+                        hazardButton.disabled = true;
+                    } else {
+                        const wasDisabled = hazardButton.dataset.prevDisabled === "true";
+                        hazardButton.classList.toggle('button-disabled', wasDisabled);
+                        hazardButton.disabled = false;
+                        delete hazardButton.dataset.prevDisabled;
+                    }
+                });
+
+                try {
+                    await fetch("/privacy/category", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: new URLSearchParams({ category, blocked: String(blocked) }),
+                    });
+                } catch (e) {
+                    console.error("Failed to update category policy:", e);
                 }
             });
         });
 
-        const buttonsToggle = document.querySelectorAll('.button-toggle');
-        buttonsToggle.forEach(buttonToggle => {
-            buttonToggle.addEventListener('click', () => {
-                // TODO: Add the eventSource to tell the webapp that the category is disabled.
-                buttonToggle.classList.toggle('button-disabled');
+        // Hazard button: blocks the specific hazard
+        const hazardToggles = document.querySelectorAll('.hazard-toggle');
+        hazardToggles.forEach(hazardToggle => {
+            hazardToggle.addEventListener('click', async () => {
+                if (hazardToggle.disabled) return;
+
+                hazardToggle.classList.toggle('button-disabled');
+
+                const hazard_id = hazardToggle.dataset.hazardId;
+                const blocked = hazardToggle.classList.contains('button-disabled');
+
+                try {
+                    await fetch("/privacy/hazard", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: new URLSearchParams({ hazard_id, blocked: String(blocked) }),
+                    });
+                } catch (e) {
+                    console.error("Failed to update hazard policy:", e);
+                }
             });
         });
     </script>

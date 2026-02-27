@@ -9,6 +9,7 @@ use crate::AppState;
 use crate::devices::Devices;
 use crate::error::{Error, error_with_info};
 use crate::layout::INDEX_LINK;
+use crate::utils::parse_category;
 
 #[derive(Serialize)]
 struct RenderMessages {
@@ -71,7 +72,23 @@ pub(crate) async fn index(State(state): State<AppState>) -> Result<Html<String>,
         &t!("templates_error.get_index_template"),
     )?;
 
-    let devices = state.devices.lock().await;
+    let mut devices = state.devices.lock().await;
+
+    {
+        let policy_state = state.policy_state.lock().await;
+
+        for device in &mut devices.0 {
+            device.update_policy_flags(|hazard_id, category_name| {
+                if let Some(category) = parse_category(category_name)
+                    && policy_state.is_category_blocked(category)
+                {
+                    return true;
+                }
+
+                policy_state.is_hazard_blocked(hazard_id)
+            });
+        }
+    }
 
     let rendered = error_with_info(
         &state.env,

@@ -31,6 +31,10 @@ request_creation = "Errore nel creare la richiesta per il dispositivo"
 send_request_with_default_params = "Errore nell'invio della richiesta con parametri di default"
 send_request_with_params = "Errore nell'invio della richiesta con parametri"
 
+[privacy_policy_errors]
+invalid_category = "Categoria non valida: %{category}"
+invalid_hazard_id = "ID rischio non valido: %{id}"
+
 [error]
 request_error = "Errore nella richiesta  ~> %{error}"
 assets_error = "Errore nel caricare la cartella `assets"
@@ -57,6 +61,8 @@ description = """
 Seleziona una o più categorie di rischio per disabilitare tutti i comandi dei
 dispositivi associati alle categorie selezionate.
 """
+hazards_label = "Rischi"
+block_all_label = "Blocca tutti"
 
 [device]
 title_description = "Descrizione"

@@ -31,6 +31,10 @@ request_creation = "Error in creating the request for the device"
 send_request_with_default_params = "Error in sending the request with default parameters"
 send_request_with_params = "Error in sending the request with input parameters"
 
+[privacy_policy_errors]
+invalid_category = "Invalid category: %{category}"
+invalid_hazard_id = "Invalid hazard ID: %{id}"
+
 [error]
 request_error = "Request error  ~> %{error}"
 assets_error = "Error in loading the `assets` directory"
@@ -57,6 +61,8 @@ description = """
 Select one or more hazard categories to disable all device commands associated
 with the selected categories.
 """
+block_all_label = "Block all"
+hazards_label = "Hazards"
 
 [device]
 title_description = "Description"

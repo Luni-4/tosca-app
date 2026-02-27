@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use tosca::hazards::Hazard;
+use tosca::hazards::{Category, Hazard};
 
 use tosca_controller::controller::Controller;
 use tosca_controller::discovery::{Discovery, TransportProtocol};
@@ -32,4 +32,14 @@ pub(crate) fn add_functions_to_env(env: &mut Environment<'_>) {
     env.add_function("hazard_category", |hazard: ViaDeserialize<Hazard>| {
         hazard.data().category_name
     });
+}
+
+#[inline]
+pub(crate) fn parse_category(name: &str) -> Option<Category> {
+    match name.trim().to_ascii_lowercase().as_str() {
+        "safety" => Some(Category::Safety),
+        "privacy" => Some(Category::Privacy),
+        "financial" => Some(Category::Financial),
+        _ => None,
+    }
 }

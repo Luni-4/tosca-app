@@ -74,17 +74,34 @@ impl LocalizedHazard {
             is_disabled: false,
         }
     }
+
+    pub(crate) const fn id(&self) -> u16 {
+        self.id
+    }
+
+    pub(crate) const fn set_disabled(&mut self, disabled: bool) {
+        self.is_disabled = disabled;
+    }
 }
 
 #[derive(Serialize)]
 pub(crate) struct RouteData {
     id: usize,
     hazards: Vec<LocalizedHazard>,
+    is_disabled: bool,
 }
 
 impl RouteData {
     pub(crate) fn new(id: usize, hazards: Vec<LocalizedHazard>) -> Self {
-        Self { id, hazards }
+        Self {
+            id,
+            hazards,
+            is_disabled: false,
+        }
+    }
+
+    pub(crate) const fn set_disabled(&mut self, disabled: bool) {
+        self.is_disabled = disabled;
     }
 }
 
@@ -171,6 +188,21 @@ impl DemoLight {
     #[inline]
     pub(crate) fn is_state_route(route: &str) -> bool {
         route == "/manual" || route == "/motion-detection" || route == "/ambient-light"
+    }
+
+    pub(crate) fn update_policy_flags<F>(&mut self, mut is_hazard_disabled: F)
+    where
+        F: FnMut(u16, &str) -> bool,
+    {
+        for route in self.info.routes.values_mut() {
+            for hazard in &mut route.data.hazards {
+                let disabled = is_hazard_disabled(hazard.id(), hazard.category_name);
+                hazard.set_disabled(disabled);
+            }
+
+            let route_disabled = route.data.hazards.iter().any(|hazard| hazard.is_disabled);
+            route.data.set_disabled(route_disabled);
+        }
     }
 }
 
