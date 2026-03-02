@@ -3,6 +3,10 @@ name = "tosca-app"
 version = "0.1.0"
 edition = "2024"
 
+[patch.crates-io]
+tosca = { git = "https://github.com/ToscaLabs/tosca" }
+tosca-controller = { git = "https://github.com/ToscaLabs/tosca" }
+
 [dependencies]
 tosca.version = "0.1.0"
 
