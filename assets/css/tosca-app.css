@@ -393,6 +393,11 @@ section {
   gap: 1rem;
 }
 
+.button-container-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .button-vertical-container {
   display: flex;
   flex-direction: column;

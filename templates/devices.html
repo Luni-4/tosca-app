@@ -117,7 +117,11 @@
                         </form>
                     </div>
                     <h3>{{ device.commands }}</h3>
-                    <div class="button-container">
+                    {% set buttons_disabled = "" %}
+                    {% if device.mode != "Manual" %}
+                        {% set buttons_disabled = " button-container-disabled" %}
+                    {% endif %}
+                    <div class="button-container{{ buttons_disabled }}">
                         {{ route_define(device.id, "/on", device.routes["/on"]) }}
                         {{ route_define(device.id, "/off", device.routes["/off"]) }}
                         {{ route_define(device.id, "/toggle", device.routes["/toggle"]) }}
@@ -187,6 +191,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     const buttons = form.closest('.modes').querySelectorAll('button');
                     buttons.forEach(btn => btn.classList.remove('selected'));
                     form.querySelector('button').classList.add('selected');
+                }
+
+                // Disable the request buttons when the mode is not manual
+                const buttonContainer = document.querySelector('.button-container');
+                if (formData.get("device_state") != "manual") {
+                    buttonContainer.classList.add('button-container-disabled');
+                } else {
+                    buttonContainer.classList.remove('button-container-disabled');
                 }
             } catch (error) {
                 console.error("Error while sendind the command:", error);
