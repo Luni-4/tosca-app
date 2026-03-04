@@ -1,0 +1,172 @@
+name: deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  create-windows-binaries:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install stable
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Get the version
+      shell: bash
+      id: tagName
+      run: |
+        VERSION=$(cargo pkgid | cut -d# -f2)
+        echo "tag=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Build tosca-app
+      run: |
+        cargo build --release
+
+    - name: Build package
+      id: package
+      shell: bash
+      run: |
+        set -e
+
+        WORKSPACE="$GITHUB_WORKSPACE"
+        BASE_NAME="tosca-app"
+        TARGET="x86_64-pc-windows-msvc"
+        TAG="${{ steps.tagName.outputs.tag }}"
+        COMMON_FILES="$BASE_NAME.exe $WORKSPACE/assets $WORKSPACE/locales"
+
+        cd "target/release"
+
+        # English package
+        ARCHIVE_NAME_EN="${BASE_NAME}-${TAG}-${TARGET}"
+        7z a -r "${WORKSPACE}/${ARCHIVE_NAME_EN}.zip" $COMMON_FILES
+        echo "file-en=${ARCHIVE_NAME_EN}.zip" >> "$GITHUB_OUTPUT"
+
+        # Italian package
+        LANG="it"
+        ARCHIVE_NAME_IT="${BASE_NAME}-${LANG}-${TAG}-${TARGET}"
+        echo 'language = "Italian"' > tosca-app.toml
+        7z a -r "${WORKSPACE}/${ARCHIVE_NAME_IT}.zip" $COMMON_FILES tosca-app.toml
+        echo "file-it=${ARCHIVE_NAME_IT}.zip" >> "$GITHUB_OUTPUT"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-artifact
+        path: |
+          ${{ steps.package.outputs.file-en }}
+          ${{ steps.package.outputs.file-it }}
+
+  create-unix-binaries:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - os: macos-latest
+            target: x86_64-apple-darwin
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        target: ${{ matrix.target }}
+
+    - name: Install musl
+      if: contains(matrix.target, 'linux-musl')
+      run: |
+        sudo apt-get install musl-tools
+
+    - name: Get the version
+      id: tagName
+      run: |
+        VERSION=$(cargo pkgid | cut -d# -f2)
+        echo "tag=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Build tosca-app
+      run: |
+        cargo build --release --target ${{ matrix.target }}
+
+    - name: Strip binary
+      run: |
+        strip target/${{ matrix.target }}/release/tosca-app
+
+    - name: Build package
+      id: package
+      run: |
+        set -e
+
+        WORKSPACE="$GITHUB_WORKSPACE"
+        BASE_NAME="tosca-app"
+        TAG="${{ steps.tagName.outputs.tag }}"
+        TARGET="${{ matrix.target }}"
+        COMMON_FILES="assets locales"
+
+        cd "target/${TARGET}/release"
+
+        # English package
+        TAR_NAME_EN="${BASE_NAME}-${TAG}-${TARGET}.tar.gz"
+        tar -czf "$WORKSPACE/$TAR_NAME_EN" -C "$WORKSPACE" $COMMON_FILES -C "$PWD" $BASE_NAME
+        echo "file-en=${TAR_NAME_EN}" >> "$GITHUB_OUTPUT"
+
+        # Italian package
+        LANG="it"
+        TAR_NAME_IT="${BASE_NAME}-${LANG}-${TAG}-${TARGET}.tar.gz"
+        echo 'language = "Italian"' > tosca-app.toml
+        tar -czf "$WORKSPACE/$TAR_NAME_IT" -C "$WORKSPACE" $COMMON_FILES -C "$PWD" $BASE_NAME tosca-app.toml
+        echo "file-it=${TAR_NAME_IT}" >> "$GITHUB_OUTPUT"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.target }}
+        path: |
+          ${{ steps.package.outputs.file-en }}
+          ${{ steps.package.outputs.file-it }}
+
+  deploy:
+
+    needs: [create-windows-binaries, create-unix-binaries]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Create Cargo.lock
+        run: |
+          cargo update
+
+      - name: Get version
+        id: tagName
+        run: |
+          VERSION=$(cargo pkgid | cut -d# -f2)
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./binaries
+
+      - name: Create a release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ steps.tagName.outputs.tag }}
+          files: |
+            ./binaries/**/*.zip
+            ./binaries/**/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
