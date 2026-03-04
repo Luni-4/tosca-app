@@ -63,9 +63,19 @@ impl Default for Configuration {
 }
 
 impl Configuration {
+    #[cfg(not(feature = "logging"))]
     pub(crate) fn load() -> Self {
         let config_filepath = Path::new(CONFIG_FILEPATH);
 
+        fs::read_to_string(config_filepath)
+            .ok()
+            .and_then(|contents| toml::from_str::<Configuration>(&contents).ok())
+            .unwrap_or_default()
+    }
+
+    #[cfg(feature = "logging")]
+    pub(crate) fn load() -> Self {
+        let config_filepath = Path::new(CONFIG_FILEPATH);
         match fs::read_to_string(config_filepath) {
             Ok(contents) => match toml::from_str::<Configuration>(&contents) {
                 Ok(config) => config,
@@ -76,12 +86,10 @@ impl Configuration {
     }
 
     #[inline]
+    #[cfg(feature = "logging")]
     fn manage_error(msg: &str, config_filepath: &Path, error: impl std::error::Error) -> Self {
-        #[cfg(feature = "logging")]
-        {
-            tracing::error!("{msg} `{}`: {error}", config_filepath.display());
-            tracing::info!("Using default configuration");
-        }
+        tracing::error!("{msg} `{}`: {error}", config_filepath.display());
+        tracing::warn!("Fallback to default configuration for `{CONFIG_FILEPATH}`");
         Configuration::default()
     }
 }
