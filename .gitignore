@@ -3,3 +3,4 @@ render
 devices.json
 log-error.log
 log-debug.log
+tosca-app.toml
