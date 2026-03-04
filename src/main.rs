@@ -115,7 +115,7 @@ async fn main() {
     let config = Configuration::load();
 
     // Set locale language.
-    let lang = config.lang.as_str();
+    let lang = config.language.as_str();
     rust_i18n::set_locale(lang);
 
     // Initialize subscriber.
@@ -161,7 +161,7 @@ async fn main() {
         .with_state(app_state);
 
     // Creates the web controller listener bind.
-    let listener_bind = SocketAddr::new(IpAddr::V4(config.ip), config.port);
+    let listener_bind = SocketAddr::new(IpAddr::V4(config.host), config.port);
 
     // Creates listener.
     let listener = tokio::net::TcpListener::bind(&listener_bind)

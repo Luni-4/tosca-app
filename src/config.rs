@@ -45,19 +45,19 @@ const fn default_language() -> Language {
 #[serde(default)]
 pub(crate) struct Configuration {
     #[serde(default = "default_host")]
-    pub(crate) ip: Ipv4Addr,
+    pub(crate) host: Ipv4Addr,
     #[serde(default = "default_port")]
     pub(crate) port: u16,
     #[serde(default = "default_language")]
-    pub(crate) lang: Language,
+    pub(crate) language: Language,
 }
 
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-            ip: default_host(),
+            host: default_host(),
             port: default_port(),
-            lang: Language::default(),
+            language: Language::default(),
         }
     }
 }
