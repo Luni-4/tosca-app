@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate rust_i18n;
 
+mod config;
 mod devices;
 mod discovery;
 mod error;
@@ -39,6 +40,7 @@ use tokio::sync::broadcast::Receiver;
 
 use tower_http::services::ServeDir;
 
+use crate::config::Configuration;
 use crate::devices::Devices;
 use crate::discovery::run_discovery;
 use crate::error::{missing_assets, missing_route};
@@ -169,6 +171,9 @@ impl AppState {
 
 #[tokio::main]
 async fn main() {
+    // Retrieve configuration data.
+    let config = Configuration::load();
+
     // Retrieve CLI arguments.
     let cli = Cli::parse();
 

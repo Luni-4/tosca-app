@@ -49,6 +49,10 @@ tokio.features = ["rt-multi-thread"]
 tokio-stream.version = "0.1.17"
 tokio-stream.features = ["sync"]
 
+toml.version = "1.0"
+toml.default-features = false
+toml.features = ["parse", "serde"]
+
 tower-http.version = "0.6.1"
 tower-http.default-features = false
 tower-http.features = ["fs", "trace"]
