@@ -37,7 +37,7 @@ jobs:
         BASE_NAME="tosca-app"
         TARGET="x86_64-pc-windows-msvc"
         TAG="${{ steps.tagName.outputs.tag }}"
-        COMMON_FILES="$BASE_NAME.exe $WORKSPACE/assets $WORKSPACE/locales"
+        COMMON_FILES="$BASE_NAME.exe $WORKSPACE/assets"
 
         cd "target/release"
 
@@ -110,7 +110,7 @@ jobs:
         BASE_NAME="tosca-app"
         TAG="${{ steps.tagName.outputs.tag }}"
         TARGET="${{ matrix.target }}"
-        COMMON_FILES="assets locales"
+        COMMON_FILES="assets"
 
         cd "target/${TARGET}/release"
 
