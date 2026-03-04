@@ -111,16 +111,16 @@ impl AppState {
 
 #[tokio::main]
 async fn main() {
+    // Initialize subscriber.
+    #[cfg(feature = "logging")]
+    logging::create_subscriber();
+
     // Retrieve configuration data.
     let config = Configuration::load();
 
     // Set locale language.
     let lang = config.language.as_str();
     rust_i18n::set_locale(lang);
-
-    // Initialize subscriber.
-    #[cfg(feature = "logging")]
-    logging::create_subscriber();
 
     let mut env = Environment::new();
 
