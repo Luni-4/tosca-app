@@ -8,7 +8,7 @@ use serde::Deserialize;
 const CONFIG_FILEPATH: &str = "tosca-app.toml";
 
 #[derive(Debug, Clone, Copy, Default, Deserialize)]
-enum Language {
+pub(crate) enum Language {
     #[default]
     English,
     Italian,
@@ -21,7 +21,7 @@ impl fmt::Display for Language {
 }
 
 impl Language {
-    const fn as_str(self) -> &'static str {
+    pub(crate) const fn as_str(self) -> &'static str {
         match self {
             Self::English => "en",
             Self::Italian => "it",
@@ -45,11 +45,11 @@ const fn default_language() -> Language {
 #[serde(default)]
 pub(crate) struct Configuration {
     #[serde(default = "default_host")]
-    ip: Ipv4Addr,
+    pub(crate) ip: Ipv4Addr,
     #[serde(default = "default_port")]
-    port: u16,
+    pub(crate) port: u16,
     #[serde(default = "default_language")]
-    lang: Language,
+    pub(crate) lang: Language,
 }
 
 impl Default for Configuration {

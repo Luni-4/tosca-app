@@ -16,9 +16,7 @@ mod request;
 mod utils;
 
 use std::collections::HashMap;
-use std::fmt;
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use std::str::FromStr;
+use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
 
 use tosca::events::Events;
@@ -30,8 +28,6 @@ use axum::{
     handler::HandlerWithoutStateExt,
     routing::{get, post},
 };
-
-use clap::Parser;
 
 use minijinja::{Environment, value::Value};
 
@@ -87,62 +83,6 @@ static TEMPLATES: &[(&str, &str)] = &builtin_templates![
     ("spinner", "widgets/spinner.html")
 ];
 
-#[derive(Clone, Copy, Default)]
-enum Language {
-    #[default]
-    English,
-    Italian,
-}
-
-impl FromStr for Language {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "en" => Ok(Self::English),
-            "it" => Ok(Self::Italian),
-            _ => Err(format!("Invalid language: {s}")),
-        }
-    }
-}
-
-impl fmt::Display for Language {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.as_str().fmt(f)
-    }
-}
-
-impl Language {
-    const fn as_str(self) -> &'static str {
-        match self {
-            Self::English => "en",
-            Self::Italian => "it",
-        }
-    }
-}
-
-#[derive(Parser)]
-#[command(
-    version,
-    about,
-    long_about = "A web app to interact with `tosca` devices."
-)]
-struct Cli {
-    /// Web app `IPv4` address.
-    ///
-    /// Only `IPv4` addresses are accepted.
-    #[arg(long, default_value_t = Ipv4Addr::LOCALHOST)]
-    ip: Ipv4Addr,
-
-    /// Web app port.
-    #[arg(long, default_value_t = 8123)]
-    port: u16,
-
-    /// Web app language.
-    #[arg(long, default_value_t = Language::default())]
-    lang: Language,
-}
-
 #[derive(Clone)]
 struct AppState {
     env: Arc<Environment<'static>>,
@@ -174,11 +114,8 @@ async fn main() {
     // Retrieve configuration data.
     let config = Configuration::load();
 
-    // Retrieve CLI arguments.
-    let cli = Cli::parse();
-
     // Set locale language.
-    let lang = cli.lang.as_str();
+    let lang = config.lang.as_str();
     rust_i18n::set_locale(lang);
 
     // Initialize subscriber.
@@ -224,7 +161,7 @@ async fn main() {
         .with_state(app_state);
 
     // Creates the web controller listener bind.
-    let listener_bind = SocketAddr::new(IpAddr::V4(cli.ip), cli.port);
+    let listener_bind = SocketAddr::new(IpAddr::V4(config.ip), config.port);
 
     // Creates listener.
     let listener = tokio::net::TcpListener::bind(&listener_bind)
